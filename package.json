@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "@mantine/core": "^7.4.0",
+    "@mantine/notifications": "^7.4.0",
+    "universal-cookie": "^7.0.0"
+  }
+}

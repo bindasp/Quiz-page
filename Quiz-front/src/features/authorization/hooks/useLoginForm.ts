@@ -23,7 +23,7 @@ export const useLoginForm = () => {
                 }
 
             },
-            confirmPassword: (value,values)=>  value!==values.password ? 'Hasła się nie zgadzają' : null,
+            confirmPassword: (value,values)=>  value!==values.password ? 'Hasła się nie zgadzają':null,
         },
     });
     return form;

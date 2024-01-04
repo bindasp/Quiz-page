@@ -1,4 +1,4 @@
-import {RouteObject, useRoutes} from "react-router-dom";
+import {Navigate, RouteObject, useRoutes} from "react-router-dom";
 import {Layout} from "../components/Layout";
 import {QuizList} from "./quiz/QuizList";
 import {ErrorPage} from "./error/ErrorPage";
@@ -6,8 +6,34 @@ import QuizForm from "./quiz/QuizForm";
 import LoginForm from "./authorization/LoginForm";
 import RegisterForm from "./authorization/RegisterForm";
 import Quiz from "./quiz/Quiz";
+import {useIsLogged} from "../hooks/useIsLogged";
 
-const routes: RouteObject[] = [
+const publicRoutes:RouteObject[]=[
+    {
+        path:'/',
+        element:<Layout></Layout>,
+        children:[
+            {
+                path:'/',
+                element:<QuizList></QuizList>
+            },
+            {
+                path:'/login',
+                element:<LoginForm></LoginForm>
+            },
+            {
+                path:'/register',
+                element:<RegisterForm></RegisterForm>
+            },
+            {
+                path: '*',
+                element: <Navigate to ='/login' replace/>
+            }
+        ]
+    }
+]
+
+const privateRoutes: RouteObject[] = [
     {
         path:"/",
         element: <Layout/>,
@@ -41,5 +67,7 @@ const routes: RouteObject[] = [
 ]
 
 export const Routing = () => {
+    const isLogged = useIsLogged();
+    const routes = isLogged ? privateRoutes:privateRoutes;
     return useRoutes(routes);
 }

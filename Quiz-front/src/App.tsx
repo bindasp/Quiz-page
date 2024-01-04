@@ -2,9 +2,8 @@ import React from 'react';
 import {BrowserRouter} from "react-router-dom";
 import {Routing} from "./features/Routing";
 import '@mantine/core/styles.css';
-import {createTheme, darken, MantineProvider} from "@mantine/core";
-import {inspect} from "util";
-
+import {createTheme, MantineProvider} from "@mantine/core";
+import { Notifications } from '@mantine/notifications';
 
 const theme = createTheme({
     defaultRadius: 'md',
@@ -17,6 +16,7 @@ const theme = createTheme({
 function App() {
     return (
         <MantineProvider theme={theme} >
+            <Notifications></Notifications>
             <BrowserRouter>
                 <Routing/>
             </BrowserRouter>

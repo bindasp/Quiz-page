@@ -1,16 +1,25 @@
 import React from "react";
-import {Button, Menu, Paper, PasswordInput, Stack, Textarea, TextInput, Title} from "@mantine/core";
+import {Button, Paper, PasswordInput, Stack, TextInput, Title} from "@mantine/core";
 
 import "../styles/Forms.css";
 import {useLoginForm} from "./hooks/useLoginForm";
-
+import {login} from "./login";
+import {useNavigate} from "react-router-dom";
+import {loginErrorNotification} from "./notifications";
+import {UserFormValues} from "../../types/UserFormValues";
 
 
 const QuizForm: React.FC = () => {
     const form = useLoginForm();
-
-    const handleSubmit = () => {
-        console.log(form.values);
+    const navigate = useNavigate();
+    const handleSubmit = async(form: UserFormValues) => {
+       try{
+           await login(form.email, form.password);
+           navigate('/');
+       }
+       catch(error){
+           loginErrorNotification();
+       }
     };
 
 
