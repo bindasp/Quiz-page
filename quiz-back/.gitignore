@@ -82,3 +82,6 @@ build/config\.gypi
 
 .npmrc
 pnpm-lock.yaml
+
+#Own
+.env
