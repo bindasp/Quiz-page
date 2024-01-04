@@ -1,0 +1,18 @@
+.Header{
+    display: flex;
+    padding-left: 100px;
+    padding-right: 100px;
+}
+.Logo{
+    width :20%;
+
+}
+.Buttons{
+    display:flex;
+    width: 100%;
+    justify-content: right;
+    align-items: center;
+}
+.Button{
+    margin-right:10px;
+}
