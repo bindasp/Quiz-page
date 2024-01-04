@@ -1,63 +1,60 @@
 import React from "react";
-import {Button, Paper, Stack, Textarea, TextInput} from "@mantine/core";
-import { Question} from "../../types/QuizFormValues";
-import {useQuizForm} from "../quiz/hooks/useQuizForm";
-import {useQuestionForm} from "../quiz/hooks/useQuestionForm";
+import {Button, Menu, Paper, PasswordInput, Stack, Textarea, TextInput, Title} from "@mantine/core";
+
+import "../styles/Forms.css";
+import {useLoginForm} from "./hooks/useLoginForm";
 
 
-const QuizForm: React.FC = () => {
-    const form = useQuizForm();
-    const questions = useQuestionForm();
+
+const RegisterForm: React.FC = () => {
+    const form = useLoginForm();
 
     const handleSubmit = () => {
         console.log(form.values);
     };
 
-    const handleAddQuestion = () => {
-        form.setFieldValue('questions', [...form.values.questions, questions.values]);
-        questions.reset();
-    };
 
     return (
-        <Stack  gap="md">
+        <Stack justify={"center"} align={"center"} gap="md">
+            <Title>Zarejestruj się</Title>
+
             <form  onSubmit={form.onSubmit(handleSubmit)}>
 
-                <TextInput
-                    style={{marginBottom:"15px", maxWidth:"1000px", margin:"auto"}}
-                    withAsterisk
-                    label={"Tytuł"}
-                    placeholder={"Podaj tytuł quizu"}
-                    {...form.getInputProps('title')}
-                />
+                <Paper  shadow="xs" style={{maxWidth:"1000px", marginBottom:"20px" ,margin:"auto",padding: "16px" }}>
 
-                {form.values.questions.map((question: Question, index: number) => (
-                    <Paper  key={index} shadow="xs" style={{maxWidth:"1000px", marginBottom:"20px" ,margin:"auto",padding: "16px" }}>
-                        <Textarea
-                            withAsterisk
-                            label={`Pytanie ${index + 1}`}
-                            placeholder="Treść pytania"
-                            {...form.getInputProps(`questions.${index}.text`)}
-                        />
+                    <TextInput
+                        label={`Login`}
+                        placeholder="Podaj login"
+                        {...form.getInputProps('login')}
+                    />
 
-                        {question.answers.map((answer: { text: string }, answerIndex: number) => (
-                            <Textarea
-                                key={answerIndex}
-                                withAsterisk
-                                label={`Odpowiedź ${String.fromCharCode(97 + answerIndex)}`}
-                                placeholder={`Odpowiedź ${String.fromCharCode(97 + answerIndex)}`}
-                                {...form.getInputProps(`questions.${index}.answers.${answerIndex}.text`)}
-                            />
-                        ))}
-                    </Paper>
-                ))}
+                    <TextInput
+                        label={`Email`}
+                        placeholder="Podaj email"
+                        {...form.getInputProps('email')}
+                    />
+                    <PasswordInput
+                        label={"Hasło"}
+                        placeholder={"Podaj hasło"}
+                        {...form.getInputProps('password')}
+                    />
+                    <PasswordInput
+                        label={"Potwierdź hasło"}
+                        placeholder={"Potwierdź hasło"}
+                        {...form.getInputProps('confirmPassword')}
+
+                    />
+
+                </Paper>
+
 
                 <Stack gap="md">
-                    <Button style ={{width:"1000px", margin:"auto"}} onClick={handleAddQuestion}>Dodaj pytanie</Button>
-                    <Button style ={{width:"1000px", margin:"auto"}} onClick={handleSubmit}>Zapisz quiz</Button>
+                    <Button type={"submit"} style ={{width:"1000px", margin:"auto"}} >Utwórz konto</Button>
+
                 </Stack>
             </form>
         </Stack>
     );
 };
 
-export default QuizForm;
+export default RegisterForm;

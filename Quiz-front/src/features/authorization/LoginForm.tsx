@@ -1,15 +1,13 @@
 import React from "react";
 import {Button, Menu, Paper, PasswordInput, Stack, Textarea, TextInput, Title} from "@mantine/core";
-import {useQuizForm} from "../quiz/hooks/useQuizForm";
-import {useQuestionForm} from "../quiz/hooks/useQuestionForm";
-import {Question} from "../../types/QuizFormValues";
+
 import "../styles/Forms.css";
+import {useLoginForm} from "./hooks/useLoginForm";
 
 
 
 const QuizForm: React.FC = () => {
-    const form = useQuizForm();
-    const questions = useQuestionForm();
+    const form = useLoginForm();
 
     const handleSubmit = () => {
         console.log(form.values);
@@ -24,20 +22,22 @@ const QuizForm: React.FC = () => {
 
 
                     <Paper  shadow="xs" style={{maxWidth:"1000px", marginBottom:"20px" ,margin:"auto",padding: "16px" }}>
-                        <Textarea
+                        <TextInput
                             label={`Email`}
                             placeholder="Podaj email"
+                            {...form.getInputProps('email')}
                         />
                         <PasswordInput
                             label={"Hasło"}
                             placeholder={"Podaj hasło"}
+                            {...form.getInputProps('password')}
                         />
 
                     </Paper>
 
 
                 <Stack gap="md">
-                    <Button style ={{width:"1000px", margin:"auto"}} onClick={handleSubmit}>Zaloguj się</Button>
+                    <Button type={"submit"} style ={{width:"1000px", margin:"auto"}} >Zaloguj się</Button>
 
                 </Stack>
             </form>

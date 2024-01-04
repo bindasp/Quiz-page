@@ -5,6 +5,7 @@ import {ErrorPage} from "./error/ErrorPage";
 import QuizForm from "./quiz/QuizForm";
 import LoginForm from "./authorization/LoginForm";
 import RegisterForm from "./authorization/RegisterForm";
+import Quiz from "./quiz/Quiz";
 
 const routes: RouteObject[] = [
     {
@@ -21,7 +22,7 @@ const routes: RouteObject[] = [
             },
             {
                 path: '/quiz/:id',
-                element: <QuizForm/>
+                element: <Quiz/>
             },
             {
                 path: '/login',

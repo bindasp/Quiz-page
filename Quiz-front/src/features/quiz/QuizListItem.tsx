@@ -2,13 +2,19 @@ import {QuizFormValues} from "../../types/QuizFormValues";
 import React, {FC, memo} from "react";
 import {Card, Image, Text} from "@mantine/core";
 import "../styles/Forms.css";
+import {useNavigate} from "react-router-dom";
+
 interface QuizListItemProps{
     item: QuizFormValues;
 }
 
 export const QuizListItem: FC<QuizListItemProps> = memo(({item})=>{
+
+    const navigate = useNavigate();
+
     return(
-        <Card className={"quiz"} c={"white"} bg={"blue"} shadow={"sm"}>
+
+        <Card className={"quiz"} c={"white"} bg={"blue"} shadow={"sm"} onClick={()=>navigate(`/quiz/${item.id}`)}>
             <Card.Section>
                 <Image
                     src={"https://placehold.co/400x200"}

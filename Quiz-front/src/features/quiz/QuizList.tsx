@@ -1,27 +1,30 @@
-
 import {QuizFormValues} from "../../types/QuizFormValues";
 import {QuizListItem} from "./QuizListItem";
 import {SimpleGrid} from "@mantine/core";
 import React from "react";
+import {QuizCategories} from "../../types/QuizCategories";
 
 const data: QuizFormValues[] = [
     {
     id:1,
     title:"Quiz piłkarski",
         description:"opis",
-    questions: [{text:'', answers:[]}],
+    questions: [{question:'', correctAnswers:[], incorrectAnswers:[]}],
+        category: QuizCategories.sport
   },
   {
     id:2,
     title:"Quiz z liguśki",
       description:"opis",
-    questions: [{text:'', answers:[]}],
+    questions: [{question:'', correctAnswers:[], incorrectAnswers:[]}],
+      category: QuizCategories.sport
   },
   {
     id:3,
     title:"Quiz z koszykówki",
       description:"opis",
-    questions: [{text:'', answers:[]}],
+    questions: [{question:'', correctAnswers:[], incorrectAnswers:[]}],
+      category: QuizCategories.sport
   },
 
 ]

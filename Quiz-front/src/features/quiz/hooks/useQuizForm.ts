@@ -1,12 +1,14 @@
 import {useForm} from "@mantine/form";
 import {QuizFormValues} from "../../../types/QuizFormValues";
+import {QuizCategories} from "../../../types/QuizCategories";
 
 export const useQuizForm = () => {
     const form = useForm<QuizFormValues>({
         initialValues: {
             title:"",
             description:"",
-            questions: []
+            questions: [{question:"", correctAnswers:[], incorrectAnswers:[]}],
+            category: QuizCategories.brak,
 
         },
 
@@ -17,7 +19,7 @@ export const useQuizForm = () => {
                 }
             },
             questions : (questions)=> {
-                if(questions.length<1){
+                if(!questions ||  questions.length<1){
                     return "At least one question is required"
                 }
             },
