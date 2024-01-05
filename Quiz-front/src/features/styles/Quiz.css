@@ -1,0 +1,12 @@
+.lista{
+
+}
+.answer:hover{
+    font-size: 110%;
+}
+.answer:active{
+    color: green;
+}
+.mantine-Checkbox-root{
+    margin-bottom: 5px;
+}
