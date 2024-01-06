@@ -3,14 +3,32 @@ import {Button, Menu, Paper, PasswordInput, Stack, Textarea, TextInput, Title} f
 
 import "../styles/Forms.css";
 import {useLoginForm} from "./hooks/useLoginForm";
+import {loginErrorNotification} from "./notifications";
 
 
 
 const RegisterForm: React.FC = () => {
     const form = useLoginForm();
 
-    const handleSubmit = () => {
-        console.log(form.values);
+    const handleSubmit = async(event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        try {
+            const response = await fetch('http://localhost:3333/auth/signon', {
+                method: 'POST',
+                headers: {
+                    ContentType: 'application/json',
+                    Authorization: 'Basic ' + window.btoa(form.values.login + ":" + form.values.email
+                    + ":" + form.values.password),
+                },
+                credentials: 'include'
+            })
+            console.log(form)
+            if (response.status !== 200) throw new Error("Rejestracja się nie powiodła");
+            return await response.text();
+        }
+        catch{
+            loginErrorNotification();
+        }
     };
 
 
@@ -18,7 +36,7 @@ const RegisterForm: React.FC = () => {
         <Stack justify={"center"} align={"center"} gap="md">
             <Title>Zarejestruj się</Title>
 
-            <form  onSubmit={form.onSubmit(handleSubmit)}>
+            <form  onSubmit={handleSubmit}>
 
                 <Paper  shadow="xs" style={{maxWidth:"1000px", marginBottom:"20px" ,margin:"auto",padding: "16px" }}>
 

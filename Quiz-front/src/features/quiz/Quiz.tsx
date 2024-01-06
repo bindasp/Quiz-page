@@ -20,6 +20,7 @@ const Quiz: React.FC=()=>{
     const [showAnswers, setShowAnswers] = useState<boolean>(false);
     const [correctAnswers, setCorrectAnswers]=useState<string[]>([])
     const [incorrectAnswers, setIncorrectAnswers]=useState<string[]>([])
+    const [points, setPoints] = useState<number>(0);
     useEffect(()=>{
         const fetchData = async()=>{
             const quiz = await fetch(`http://localhost:3333/quiz/${id}`,{
@@ -45,13 +46,20 @@ const Quiz: React.FC=()=>{
             const initialAnswers: Record<string, string[]> = {};
 
             questions.forEach((question) => {
+                const shuffledIncorrectAnswers = shuffleArray(question.incorrectAnswers);
                 initialAnswers[question.question] = [];
             });
-
             setSelectedAnswers(initialAnswers);
         };
-        fetchData();
+        function shuffleArray<T>(array: T[]): T[] {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
 
+        fetchData();
 
     },[id]);
 
@@ -81,36 +89,46 @@ const Quiz: React.FC=()=>{
         const correctAnswers: string[] = [];
         const incorrectAnswers: string[] = [];
 
+        let currentPoints = 0;
+
         quizData?.questions.forEach((question, questionIndex) => {
             const selected = selectedAnswers[question.question];
             const correct = question.correctAnswers;
 
             const isCorrect = selected.every((answer) => correct.includes(answer));
             if (isCorrect) {
-                correctAnswers.push(`${question.question}-${questionIndex}`);
+                correctAnswers.push(...selected);
+                currentPoints+=1;
             } else {
-                incorrectAnswers.push(`${question.question}-${questionIndex}`);
+                incorrectAnswers.push(...selected);
+                currentPoints-=0.25;
             }
         });
 
-        setCorrectAnswers(correctAnswers);
+        setCorrectAnswers(points >= 0 ? Array(Math.floor(points)).fill("correct") : []);
         setIncorrectAnswers(incorrectAnswers);
-        console.log(selectedAnswers);
+        setPoints(currentPoints);
         setShowAnswers(true);
+
+        console.log(points);
+
     };
 
-    const isCorrectAnswer = (question:string, answer:string)=> {
+    const isCorrectAnswer = (question: string, answer: string) => {
         const selected = selectedAnswers[question];
-        const correct = quizData?.questions.find(q =>
-            q.question === question)?.correctAnswers || [];
+        const correct = quizData?.questions.find((q) => q.question === question)?.correctAnswers || [];
+
         return showAnswers && selected.includes(answer) && correct.includes(answer);
     };
 
-    const isIncorrectAnswer = (question:string, answer:string) => {
+    const isIncorrectAnswer = (question: string, answer: string) => {
         const selected = selectedAnswers[question];
-        const correct = quizData?.questions.find(q => q.question === question)?.correctAnswers || [];
+        const correct = quizData?.questions.find((q) => q.question === question)?.correctAnswers || [];
         return showAnswers && selected.includes(answer) && !correct.includes(answer);
     };
+
+
+
     return(
         <Stack>
             <Title m={"auto"}>
@@ -127,34 +145,22 @@ const Quiz: React.FC=()=>{
                     <div key={item.question}>
                         <p>{item.question}</p>
 
-                            {item.correctAnswers.map((answer, index) => (
-                                <div>
+                            {(item.correctAnswers.concat(item.incorrectAnswers)).map((answer, index) => (
 
-                                    <Checkbox
-                                        label={answer} id={`${item.question}-${index}`}
-                                        value={answer}
-                                        checked={selectedAnswers[item.question].includes(answer)}
-                                        onChange={() => handleCheckboxChange(item.question, answer)}
-                                        className={(showAnswers && isCorrectAnswer(item.question, answer)) ? "correct" : ""}                                    >
-                                    </Checkbox>
-                                </div>
-                            ))}
-
-                            {item.incorrectAnswers.map((answer, index) => (
                                 <div>
                                     <Checkbox
-                                        label={answer} id={`${item.question}-${index}`}
+                                        key={`${item.question}-${index}`}
+                                        label={answer}
+                                        id={`${item.question}-${index}`}
                                         value={answer}
                                         checked={selectedAnswers[item.question].includes(answer)}
-                                        onChange={() => handleCheckboxChange(item.question, answer)}
-                                        className={(showAnswers && isIncorrectAnswer(item.question, answer)) ? "incorrect" : ""}
-                                    >
-                                    </Checkbox>
+                                        onChange={() =>  handleCheckboxChange(item.question, answer) }
+                                        className={(isCorrectAnswer(item.question, answer)) ? "correct" : (isIncorrectAnswer(item.question, answer)) ? "incorrect" : ""}
+                                        color = {(isCorrectAnswer(item.question, answer)) ? "lime" : (isIncorrectAnswer(item.question, answer)) ? "red" : ""}
+
+                                    />
                                 </div>
                             ))}
-
-
-
 
                     </div>
                 </Paper>

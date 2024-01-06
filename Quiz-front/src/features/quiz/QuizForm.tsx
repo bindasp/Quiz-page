@@ -23,13 +23,7 @@ const QuizForm: React.FC = () => {
 
         console.log(response);
         navigate('/');
-        // try{
-        //     await postQuiz(form.values);
-        //     navigate('/')
-        // }
-        // catch (error){
-        //     loginErrorNotification();
-        // }
+
     };
 
     const handleAddQuestion = () => {

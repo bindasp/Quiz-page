@@ -3,23 +3,31 @@ import {Button, Paper, PasswordInput, Stack, TextInput, Title} from "@mantine/co
 
 import "../styles/Forms.css";
 import {useLoginForm} from "./hooks/useLoginForm";
-import {login} from "./login";
 import {useNavigate} from "react-router-dom";
 import {loginErrorNotification} from "./notifications";
-import {UserFormValues} from "../../types/UserFormValues";
 
 
-const QuizForm: React.FC = () => {
+const LoginForm: React.FC = () => {
     const form = useLoginForm();
     const navigate = useNavigate();
-    const handleSubmit = async(form: UserFormValues) => {
-       try{
-           await login(form.email, form.password);
-           navigate('/');
-       }
-       catch(error){
-           loginErrorNotification();
-       }
+    const handleSubmit = async(event: React.FormEvent<HTMLFormElement>) => {
+        try {
+            event.preventDefault();
+            const response = await fetch('http://localhost:3333/auth/signin', {
+                method: 'POST',
+                headers: {
+                    ContentType: 'application/json',
+                    Authorization: 'Basic ' + window.btoa(form.values.login + ":" + form.values.password),
+                },
+                credentials: 'include'
+            })
+            console.log(form)
+            if (response.status !== 200) throw new Error("Logowanie się nie powiodło");
+            return await response.text();
+        }
+        catch{
+            loginErrorNotification();
+        }
     };
 
 
@@ -27,14 +35,14 @@ const QuizForm: React.FC = () => {
         <Stack justify={"center"} align={"center"} gap="md">
             <Title>Zaloguj się</Title>
 
-            <form  onSubmit={form.onSubmit(handleSubmit)}>
+            <form  onSubmit={handleSubmit}>
 
 
                     <Paper  shadow="xs" style={{maxWidth:"1000px", marginBottom:"20px" ,margin:"auto",padding: "16px" }}>
                         <TextInput
-                            label={`Email`}
-                            placeholder="Podaj email"
-                            {...form.getInputProps('email')}
+                            label={`Login`}
+                            placeholder="Podaj login"
+                            {...form.getInputProps('login')}
                         />
                         <PasswordInput
                             label={"Hasło"}
@@ -44,14 +52,11 @@ const QuizForm: React.FC = () => {
 
                     </Paper>
 
+                    <Button   type={"submit"} style ={{width:"1000px", margin:"auto"}} >Zaloguj się</Button>
 
-                <Stack gap="md">
-                    <Button type={"submit"} style ={{width:"1000px", margin:"auto"}} >Zaloguj się</Button>
-
-                </Stack>
             </form>
         </Stack>
     );
 };
 
-export default QuizForm;
+export default LoginForm;

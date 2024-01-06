@@ -16,7 +16,7 @@ const theme = createTheme({
 function App() {
     return (
         <MantineProvider theme={theme} >
-            <Notifications></Notifications>
+            <Notifications position={"top-right"} ></Notifications>
             <BrowserRouter>
                 <Routing/>
             </BrowserRouter>

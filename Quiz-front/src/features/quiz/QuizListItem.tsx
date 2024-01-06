@@ -1,5 +1,5 @@
 import {QuizFormValues} from "../../types/QuizFormValues";
-import React, {FC, memo, useState} from "react";
+import React, {FC, memo, useEffect, useState} from "react";
 import {Card, Image, Text, Tooltip} from "@mantine/core";
 import "../styles/Forms.css";
 import {useNavigate} from "react-router-dom";
@@ -11,7 +11,26 @@ interface QuizListItemProps{
 }
 
 export const QuizListItem: FC<QuizListItemProps> = memo(({item})=>{
+    const [randomImageUrl, setRandomImageUrl] = useState<string | null>(null);
+    useEffect(() => {
+        const fetchRandomImage = async () => {
+            try {
+                const response = await fetch(
+                    "https://source.unsplash.com/random/400x200"
+                );
 
+                if (response.ok) {
+                    setRandomImageUrl(response.url);
+                } else {
+                    throw new Error("Failed to fetch random image");
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        fetchRandomImage();
+    }, []);
     const navigate = useNavigate();
     const handleOnClick = async() => {
         if(item.id !== undefined)
@@ -32,7 +51,8 @@ export const QuizListItem: FC<QuizListItemProps> = memo(({item})=>{
         >
             <Card.Section>
                 <Image
-                    src={"https://placehold.co/400x200"}
+                   // src={"https://placehold.co/400x200"}
+                    src={randomImageUrl}
                     h={300}
                     alt={"alt"}
                 />
