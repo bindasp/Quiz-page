@@ -1,8 +1,9 @@
-import {Button, Checkbox, List, Paper, Radio, Stack, ThemeIcon, Title} from "@mantine/core";
+import {Button, Checkbox, List, Menu, Paper, Radio, Stack, ThemeIcon, Title} from "@mantine/core";
 import {useNavigate, useParams} from "react-router-dom";
 import React, {useEffect, useState} from "react";
 import {QuizCategories} from "../../types/QuizCategories";
 import "../styles/Quiz.css";
+
 interface quizData{
     id?:string;
     title: string;
@@ -16,6 +17,9 @@ const Quiz: React.FC=()=>{
     const [quizData, setQuizData] = useState<quizData|null>(null);
     const [selectedAnswers, setSelectedAnswers] = useState<Record<string,string[]>>({});
     const navigate = useNavigate();
+    const [showAnswers, setShowAnswers] = useState<boolean>(false);
+    const [correctAnswers, setCorrectAnswers]=useState<string[]>([])
+    const [incorrectAnswers, setIncorrectAnswers]=useState<string[]>([])
     useEffect(()=>{
         const fetchData = async()=>{
             const quiz = await fetch(`http://localhost:3333/quiz/${id}`,{
@@ -31,7 +35,6 @@ const Quiz: React.FC=()=>{
                 const data:quizData = await quiz.json();
                 setQuizData(data);
                 initializeSelectedAnswers(data.questions);
-
             }
             else{
                 console.error('Błąd podczas pobierania quizu');
@@ -57,41 +60,57 @@ const Quiz: React.FC=()=>{
             const isSelected = prevSelectedAnswers[question].includes(answer);
 
             if (isSelected) {
+
                 return {
                     ...prevSelectedAnswers,
                     [question]: prevSelectedAnswers[question].filter((selectedAnswer) => selectedAnswer !== answer),
                 };
             } else {
+
                 return {
                     ...prevSelectedAnswers,
                     [question]: [...prevSelectedAnswers[question], answer],
                 };
+
             }
         });
+
         };
 
-    const handleSubmit = ()=>{
-        quizData?.questions.forEach((question)=>{
+    const handleSubmit = () => {
+        const correctAnswers: string[] = [];
+        const incorrectAnswers: string[] = [];
+
+        quizData?.questions.forEach((question, questionIndex) => {
             const selected = selectedAnswers[question.question];
             const correct = question.correctAnswers;
-            const incorrect = question.incorrectAnswers;
 
-            const correctSelected = selected.filter((answer)=>correct.includes(answer));
-            const incorrectSelected = selected.filter((answer) => incorrect.includes(answer));
-
-            console.log(`Pytanie: ${question.question}`);
-            console.log(`Poprawne odpowiedzi: ${correct}`);
-            console.log(`Zaznaczone poprawne odpowiedzi: ${correctSelected}`);
-            console.log(`Niepoprawne odpowiedzi: ${incorrect}`);
-            console.log(`Zaznaczone niepoprawne odpowiedzi: ${incorrectSelected}`);
-
-            navigate(`/quiz/$${id}/results`)
-
+            const isCorrect = selected.every((answer) => correct.includes(answer));
+            if (isCorrect) {
+                correctAnswers.push(`${question.question}-${questionIndex}`);
+            } else {
+                incorrectAnswers.push(`${question.question}-${questionIndex}`);
+            }
         });
 
-    }
+        setCorrectAnswers(correctAnswers);
+        setIncorrectAnswers(incorrectAnswers);
+        console.log(selectedAnswers);
+        setShowAnswers(true);
+    };
 
+    const isCorrectAnswer = (question:string, answer:string)=> {
+        const selected = selectedAnswers[question];
+        const correct = quizData?.questions.find(q =>
+            q.question === question)?.correctAnswers || [];
+        return showAnswers && selected.includes(answer) && correct.includes(answer);
+    };
 
+    const isIncorrectAnswer = (question:string, answer:string) => {
+        const selected = selectedAnswers[question];
+        const correct = quizData?.questions.find(q => q.question === question)?.correctAnswers || [];
+        return showAnswers && selected.includes(answer) && !correct.includes(answer);
+    };
     return(
         <Stack>
             <Title m={"auto"}>
@@ -110,12 +129,13 @@ const Quiz: React.FC=()=>{
 
                             {item.correctAnswers.map((answer, index) => (
                                 <div>
+
                                     <Checkbox
                                         label={answer} id={`${item.question}-${index}`}
                                         value={answer}
                                         checked={selectedAnswers[item.question].includes(answer)}
                                         onChange={() => handleCheckboxChange(item.question, answer)}
-                                    >
+                                        className={(showAnswers && isCorrectAnswer(item.question, answer)) ? "correct" : ""}                                    >
                                     </Checkbox>
                                 </div>
                             ))}
@@ -127,15 +147,21 @@ const Quiz: React.FC=()=>{
                                         value={answer}
                                         checked={selectedAnswers[item.question].includes(answer)}
                                         onChange={() => handleCheckboxChange(item.question, answer)}
+                                        className={(showAnswers && isIncorrectAnswer(item.question, answer)) ? "incorrect" : ""}
                                     >
                                     </Checkbox>
                                 </div>
                             ))}
 
+
+
+
                     </div>
                 </Paper>
             ))}
-            <Button style={{width:"60%", margin:"auto"}} onClick={handleSubmit}>Zatwierdź odpowiedzi</Button>
+
+            <Button display={showAnswers ? "none" : ""} style={{width:"60%", margin:"auto"}} onClick={handleSubmit}>Zatwierdź odpowiedzi</Button>
+
         </Stack>
     )
 }

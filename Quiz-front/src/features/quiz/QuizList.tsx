@@ -20,11 +20,48 @@ const data: QuizFormValues[] = [
       category: QuizCategories.sport
   },
   {
+      id:'6597f25af3d4c6fbc7a15fcf',
     title:"Quiz z koszykówki",
       description:"opis",
     questions: [{question:'', correctAnswers:[], incorrectAnswers:[]}],
       category: QuizCategories.sport
   },
+    {
+        id:'6597f25af3d4c6fbc7a15fcf',
+        title:"Quiz z koszykówki",
+        description:"opis",
+        questions: [{question:'', correctAnswers:[], incorrectAnswers:[]}],
+        category: QuizCategories.sport
+    },
+    {
+        id:'6597f25af3d4c6fbc7a15fcf',
+        title:"Quiz z koszykówki",
+        description:"opis",
+        questions: [{question:'', correctAnswers:[], incorrectAnswers:[]}],
+        category: QuizCategories.sport
+    },
+    {
+        id:'6597f25af3d4c6fbc7a15fcf',
+        title:"Quiz z koszykówki",
+        description:"opis",
+        questions: [{question:'', correctAnswers:[], incorrectAnswers:[]}],
+        category: QuizCategories.sport
+    },
+    {
+        id:'6597f25af3d4c6fbc7a15fcf',
+        title:"Quiz z koszykówki",
+        description:"opis",
+        questions: [{question:'', correctAnswers:[], incorrectAnswers:[]}],
+        category: QuizCategories.sport
+    },
+    {
+        id:'6597f25af3d4c6fbc7a15fcf',
+        title:"Quiz z koszykówki",
+        description:"opis",
+        questions: [{question:'', correctAnswers:[], incorrectAnswers:[]}],
+        category: QuizCategories.sport
+    },
+
 
 ]
 export const QuizList = () => {
