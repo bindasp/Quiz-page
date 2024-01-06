@@ -17,4 +17,8 @@ export class QuizService {
       },
     });
   }
+
+  getRandomQuiz() {
+    return this.prisma.quiz.findMany({ take: 1 });
+  }
 }

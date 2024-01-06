@@ -32,6 +32,14 @@ type Question{
   incorrectAnswers String[]
 }
 
+model User{
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  email String
+  login String
+  password String
+  quizId String[] @default([])
+}
+
 
 //
 //User;id,login,hasło,email,isAdmin

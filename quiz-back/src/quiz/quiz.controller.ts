@@ -14,4 +14,8 @@ export class QuizController {
   saveQuiz(@Body() quiz: Quiz) {
     return this.quizService.saveQuiz(quiz);
   }
+  @Get('random')
+  getRandomQuiz() {
+    return this.quizService.getRandomQuiz();
+  }
 }
