@@ -1,6 +1,6 @@
 import {QuizFormValues} from "../../types/QuizFormValues";
 import React, {FC, memo, useState} from "react";
-import {Card, Image, Text} from "@mantine/core";
+import {Card, Image, Text, Tooltip} from "@mantine/core";
 import "../styles/Forms.css";
 import {useNavigate} from "react-router-dom";
 import Quiz from "./Quiz";
@@ -21,7 +21,13 @@ export const QuizListItem: FC<QuizListItemProps> = memo(({item})=>{
 
 
     return(
-
+        <Tooltip
+            position="bottom"
+            label={item.description}
+            bg={'blue'}
+            withArrow
+            openDelay={400}
+        >
         <Card className={'quiz'}  c={"white"} bg={"blue"} shadow={"sm"} onClick={handleOnClick}
         >
             <Card.Section>
@@ -37,5 +43,6 @@ export const QuizListItem: FC<QuizListItemProps> = memo(({item})=>{
             </Text>
 
         </Card>
+        </Tooltip>
     );
 })
