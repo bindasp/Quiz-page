@@ -37,6 +37,7 @@ export class AuthService {
       where: { login: dto.login },
       select: { id: true, login: true, password: true },
     });
+
     if (!user) throw new ForbiddenException('Credentials incorrect');
 
     const pwMatches = await argon.verify(user.password, dto.password);
@@ -44,5 +45,12 @@ export class AuthService {
     delete user.password;
 
     return user;
+  }
+
+  me(userId: string) {
+    return this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { id: true, login: true, email: true },
+    });
   }
 }

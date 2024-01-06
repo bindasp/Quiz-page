@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class PrismaService extends PrismaClient {
-  constructor() {
+  constructor(config: ConfigService) {
     super({
       datasources: {
         db: {
-          url: 'mongodb+srv://admin:admin@quizdb.xp9ermf.mongodb.net/QuizDB?retryWrites=true&w=majority',
+          url: config.get('DATABASE_URL'),
         },
       },
     });
