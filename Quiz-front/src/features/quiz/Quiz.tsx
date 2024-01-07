@@ -1,4 +1,4 @@
-import {Button, Checkbox, List, Menu, Paper, Radio, Stack, ThemeIcon, Title} from "@mantine/core";
+import {Button, Checkbox,Text, List, Menu, Paper, Radio, Stack, ThemeIcon, Title} from "@mantine/core";
 import {useNavigate, useParams} from "react-router-dom";
 import React, {useEffect, useState} from "react";
 import {QuizCategories} from "../../types/QuizCategories";
@@ -22,6 +22,7 @@ const Quiz: React.FC=()=>{
     const [correctAnswers, setCorrectAnswers]=useState<string[]>([])
     const [incorrectAnswers, setIncorrectAnswers]=useState<string[]>([])
     const [points, setPoints] = useState<number>(0);
+    const [cPoints, setCPoints] = useState<number[]>([]);
     useEffect(()=>{
         const fetchData = async()=>{
             const quiz = await fetch(`http://localhost:3333/api/quiz/${id}`,{
@@ -87,36 +88,38 @@ const Quiz: React.FC=()=>{
         };
 
     const handleSubmit = () => {
-        const correctAnswers: string[] = [];
-        const incorrectAnswers: string[] = [];
-
-        let currentPoints = 0;
+        const newCPoints:number[] = [];
 
         quizData?.questions.forEach((question, questionIndex) => {
+            const correctAnswers: string[] = [];
+            const incorrectAnswers: string[] = [];
+            let currentPoints = 0;
+
             const selected = selectedAnswers[question.question];
             const correct = question.correctAnswers;
+            const incorrect = question.incorrectAnswers;
+            selected.forEach((answer)=> {
+                if(correct.includes(answer)){
+                    correctAnswers.push(answer);
+                }
+                if(incorrect.includes(answer)){
+                    incorrectAnswers.push(answer);
+                    currentPoints -= 0.25;
 
-            const isCorrect = selected.every((answer) => correct.includes(answer));
-            if (isCorrect) {
-                correctAnswers.push(...selected);
+                }
 
-            } else {
-                incorrectAnswers.push(...selected);
-            }
-
-            currentPoints += correctAnswers.length/correct.length;
-
+            })
+            currentPoints+= correctAnswers.length/correct.length;
+            console.log(points);
+            if(currentPoints<0) currentPoints=0;
+            setPoints((prevPoints) => prevPoints + currentPoints);
         });
 
-
-
-
-        setCorrectAnswers(points >= 0 ? Array(Math.floor(points)).fill("correct") : []);
+        setCorrectAnswers(correctAnswers);
         setIncorrectAnswers(incorrectAnswers);
-        setPoints(points + currentPoints);
         setShowAnswers(true);
 
-        console.log(points);
+
 
     };
 
@@ -140,8 +143,8 @@ const Quiz: React.FC=()=>{
             <Title m={"auto"}>
                 {quizData?.title}
             </Title>
-
-            {quizData?.questions.map((item) => (
+            <Text display={!showAnswers ? "none" : ""} ta={"center"}>Twój wynik to: {points}/{quizData?.questions.length}</Text>
+            {quizData?.questions.map((item, questionIndex) => (
                 <Paper
                     withBorder={true}
                     shadow="xs"
@@ -169,11 +172,15 @@ const Quiz: React.FC=()=>{
                             ))}
 
                     </div>
+
+                    <div>
+                        <Text ta={"center"} className={"correct-answers"}  display={showAnswers ? "" : "none"}>Poprawne odpowiedzi: {item.correctAnswers.join(', ')}</Text>
+                    </div>
+
                 </Paper>
             ))}
 
             <Button display={showAnswers ? "none" : ""} style={{width:"60%", margin:"auto"}} onClick={handleSubmit}>Zatwierdź odpowiedzi</Button>
-            <Title display={showAnswers ? "" : "none"}> {points}</Title>
         </Stack>
     )
 }
