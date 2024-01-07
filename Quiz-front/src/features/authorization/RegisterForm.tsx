@@ -4,27 +4,32 @@ import {Button, Menu, Paper, PasswordInput, Stack, Textarea, TextInput, Title} f
 import "../styles/Forms.css";
 import {useLoginForm} from "./hooks/useLoginForm";
 import {loginErrorNotification} from "./notifications";
+import {useNavigate} from "react-router-dom";
 
 
 
 const RegisterForm: React.FC = () => {
     const form = useLoginForm();
+    const navigate = useNavigate();
 
     const handleSubmit = async(event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         try {
-            const response = await fetch('http://localhost:3333/auth/signon', {
+            const response = await fetch('http://localhost:3333/api/auth/signup', {
                 method: 'POST',
                 headers: {
-                    ContentType: 'application/json',
-                    Authorization: 'Basic ' + window.btoa(form.values.login + ":" + form.values.email
-                    + ":" + form.values.password),
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
                 },
+                body: JSON.stringify(form.values),
                 credentials: 'include'
             })
-            console.log(form)
-            if (response.status !== 200) throw new Error("Rejestracja się nie powiodła");
-            return await response.text();
+
+            if (response.status !== 201) throw new Error("Rejestracja się nie powiodła");
+
+            else {
+                navigate('/login');
+            }
         }
         catch{
             loginErrorNotification();

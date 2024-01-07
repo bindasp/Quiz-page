@@ -12,8 +12,8 @@ export const useLoginForm = () => {
 
         validate: {
             login: (value) => {
-                if (value.length < 3) {
-                    return "Login musi mieć przynajmniej 3 znaki";
+                if (value.length < 3 && value.length > 16) {
+                    return "Login musi mieć przynajmniej 3 znaki i maksymalnie 16";
                 }
             },
             email: isEmail("Podany email jest niepoprawny"),

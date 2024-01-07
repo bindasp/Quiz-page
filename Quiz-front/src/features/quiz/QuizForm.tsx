@@ -1,8 +1,8 @@
-import React from "react";
+import React, {useState} from "react";
 import {Button, Checkbox, Paper, Select, Stack, Textarea, TextInput} from "@mantine/core";
 
 import {useQuizForm} from "./hooks/useQuizForm";
-import {IconCircle} from "@tabler/icons-react";
+import {IconCircle, IconX} from "@tabler/icons-react";
 import {QuizCategories} from "../../types/QuizCategories";
 import {useNavigate} from "react-router-dom";
 import "../styles/Forms.css"
@@ -10,9 +10,10 @@ import "../styles/Forms.css"
 const QuizForm: React.FC = () => {
     const form = useQuizForm();
     const navigate = useNavigate();
+    const [updatedQuestions, setUpdatedQuestions] = useState<any[]>([]);
     const handleSubmit = async () => {
-        console.log(form.values);
-        const response = await fetch(`http://localhost:3333/quiz`, {
+        handleBeforeSubmit();
+        const response = await fetch(`http://localhost:3333/api/quiz`, {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
@@ -42,29 +43,63 @@ const QuizForm: React.FC = () => {
     };
 
     const handleToggleCorrectAnswer = (questionIndex: number, answerIndex: number) => {
-        const updatedQuestions = [...form.values.questions];
+        const updatedQuestionsCopy = [...form.values.questions];
 
-        const isCorrect = updatedQuestions[questionIndex].correctAnswers.includes(
-            updatedQuestions[questionIndex].incorrectAnswers[answerIndex]
-        );
-        const selectedAnswer = updatedQuestions[questionIndex].incorrectAnswers[answerIndex];
-        if (isCorrect) {
+        if (updatedQuestionsCopy[questionIndex] && updatedQuestionsCopy[questionIndex].incorrectAnswers) {
+            const selectedAnswer: string = updatedQuestionsCopy[questionIndex].incorrectAnswers[answerIndex];
+            const isCorrect: boolean = updatedQuestionsCopy[questionIndex].correctAnswers.includes(selectedAnswer);
 
-            updatedQuestions[questionIndex].correctAnswers = updatedQuestions[questionIndex].correctAnswers.filter(
-                (answer) => answer !== selectedAnswer
-            );
-        } else {
-            updatedQuestions[questionIndex].correctAnswers = [
-                ...updatedQuestions[questionIndex].correctAnswers,
-                selectedAnswer,
-            ];
+            if (isCorrect) {
+                updatedQuestionsCopy[questionIndex].correctAnswers = updatedQuestionsCopy[questionIndex].correctAnswers.filter(
+                    (answer: string) => answer !== selectedAnswer
+                );
+            } else {
+                updatedQuestionsCopy[questionIndex].correctAnswers = [
+                    ...updatedQuestionsCopy[questionIndex].correctAnswers,
+                    selectedAnswer,
+                ];
+            }
+
+            form.setFieldValue("questions", updatedQuestionsCopy);
         }
-
-        form.setFieldValue("questions", updatedQuestions);
     };
 
-    const selectCategory = (category: QuizCategories) => {
-        console.log()
+    const handleBeforeSubmit = () => {
+        const updatedQuestionsCopy = [...form.values.questions];
+
+        updatedQuestionsCopy.forEach(question => {
+            if (question.incorrectAnswers) {
+
+                question.incorrectAnswers = question.incorrectAnswers.filter(
+                    (answer: string) => !question.correctAnswers.includes(answer)
+                );
+            }
+        });
+
+        form.setFieldValue("questions", updatedQuestionsCopy);
+    };
+
+    const handleDeleteAnswer = (questionIndex: number, answerIndex: number) => {
+        const updatedQuestions = [...form.values.questions];
+        const deletedAnswer = form.values.questions[questionIndex]?.incorrectAnswers[answerIndex];
+
+        updatedQuestions[questionIndex].incorrectAnswers.splice(answerIndex, 1);
+
+        updatedQuestions[questionIndex].correctAnswers = updatedQuestions[questionIndex].correctAnswers.filter(
+            (answer) => answer !== deletedAnswer
+        );
+
+        form.setFieldValue("questions", updatedQuestions);
+
+        console.log(form.values);
+    };
+
+
+    const handleDeleteQuestion = (questionIndex:number)=>{
+        const updatedQuestions = [...form.values.questions];
+        updatedQuestions.splice(questionIndex, 1);
+
+        form.setFieldValue("questions", updatedQuestions);
     }
 
     return (
@@ -126,21 +161,28 @@ const QuizForm: React.FC = () => {
                                           onChange={() => handleToggleCorrectAnswer(questionIndex, answerIndex)}
                                 >
                                 </Checkbox>
+                                <IconX  className={"delete-icon"} style={{margin:"auto"}} onClick={()=>handleDeleteAnswer(questionIndex, answerIndex)}></IconX>
                             </div>
                         ))}
-                        <Button
+                        <div style={{display:"flex"}}>
+                        <Button mr={"20px"}
                             onClick={() => handleAddAnswer(questionIndex)}
                             style={{width: "20%", marginTop: "10px"}}
                         >
                             Dodaj odpowiedź
                         </Button>
-
+                            <Button
+                                onClick={() => handleDeleteQuestion(questionIndex)}
+                                style={{width: "20%", marginTop: "10px"}}
+                            >Usuń pytanie</Button>
+                        </div>
                     </Paper>
                 ))}
 
                 <Stack gap="md">
                     <Button style={{width: "1000px", margin: "auto"}} onClick={handleAddQuestion}>Dodaj pytanie</Button>
                     <Button type="submit" style={{width: "1000px", margin: "auto"}}>Zapisz quiz</Button>
+                    <Button onClick={()=>console.log(form.values)} style={{width: "1000px", margin: "auto"}}>Test</Button>
                 </Stack>
             </form>
         </Stack>

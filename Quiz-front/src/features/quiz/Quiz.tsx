@@ -3,6 +3,7 @@ import {useNavigate, useParams} from "react-router-dom";
 import React, {useEffect, useState} from "react";
 import {QuizCategories} from "../../types/QuizCategories";
 import "../styles/Quiz.css";
+import Label = Menu.Label;
 
 interface quizData{
     id?:string;
@@ -23,7 +24,7 @@ const Quiz: React.FC=()=>{
     const [points, setPoints] = useState<number>(0);
     useEffect(()=>{
         const fetchData = async()=>{
-            const quiz = await fetch(`http://localhost:3333/quiz/${id}`,{
+            const quiz = await fetch(`http://localhost:3333/api/quiz/${id}`,{
                 method:'GET',
                 headers:{
                     'Accept': 'application/json',
@@ -98,16 +99,21 @@ const Quiz: React.FC=()=>{
             const isCorrect = selected.every((answer) => correct.includes(answer));
             if (isCorrect) {
                 correctAnswers.push(...selected);
-                currentPoints+=1;
+
             } else {
                 incorrectAnswers.push(...selected);
-                currentPoints-=0.25;
             }
+
+            currentPoints += correctAnswers.length/correct.length;
+
         });
+
+
+
 
         setCorrectAnswers(points >= 0 ? Array(Math.floor(points)).fill("correct") : []);
         setIncorrectAnswers(incorrectAnswers);
-        setPoints(currentPoints);
+        setPoints(points + currentPoints);
         setShowAnswers(true);
 
         console.log(points);
@@ -167,7 +173,7 @@ const Quiz: React.FC=()=>{
             ))}
 
             <Button display={showAnswers ? "none" : ""} style={{width:"60%", margin:"auto"}} onClick={handleSubmit}>Zatwierdź odpowiedzi</Button>
-
+            <Title display={showAnswers ? "" : "none"}> {points}</Title>
         </Stack>
     )
 }

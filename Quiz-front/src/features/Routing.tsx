@@ -9,30 +9,30 @@ import Quiz from "./quiz/Quiz";
 import {useIsLogged} from "../hooks/useIsLogged";
 import QuizResults from "./quiz/QuizResults";
 
-// const publicRoutes:RouteObject[]=[
-//     {
-//         path:'/',
-//         element:<Layout></Layout>,
-//         children:[
-//             {
-//                 path:'/',
-//                 element:<QuizList></QuizList>
-//             },
-//             {
-//                 path:'/login',
-//                 element:<LoginForm></LoginForm>
-//             },
-//             {
-//                 path:'/register',
-//                 element:<RegisterForm></RegisterForm>
-//             },
-//             {
-//                 path: '*',
-//                 element: <Navigate to ='/login' replace/>
-//             }
-//         ]
-//     }
-// ]
+const publicRoutes:RouteObject[]=[
+    {
+        path:'/',
+        element:<Layout></Layout>,
+        children:[
+            {
+                path:'/',
+                element:<QuizList></QuizList>
+            },
+            {
+                path:'/login',
+                element:<LoginForm></LoginForm>
+            },
+            {
+                path:'/register',
+                element:<RegisterForm></RegisterForm>
+            },
+            {
+                path: '*',
+                element: <Navigate to ='/login' replace/>
+            }
+        ]
+    }
+]
 
 const privateRoutes: RouteObject[] = [
     {
@@ -72,8 +72,7 @@ const privateRoutes: RouteObject[] = [
 ]
 
 export const Routing = () => {
-    // const isLogged = useIsLogged();
-    // const routes = isLogged ? privateRoutes:privateRoutes;
-    const routes = privateRoutes;
+    const isLogged = useIsLogged();
+    const routes = isLogged ? privateRoutes:publicRoutes;
     return useRoutes(routes);
 }

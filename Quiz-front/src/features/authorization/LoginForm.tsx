@@ -13,7 +13,7 @@ const LoginForm: React.FC = () => {
     const handleSubmit = async(event: React.FormEvent<HTMLFormElement>) => {
         try {
             event.preventDefault();
-            const response = await fetch('http://localhost:3333/auth/signin', {
+            const response = await fetch('http://localhost:3333/api/auth/signin', {
                 method: 'POST',
                 headers: {
                     ContentType: 'application/json',
@@ -21,9 +21,15 @@ const LoginForm: React.FC = () => {
                 },
                 credentials: 'include'
             })
+
+
             console.log(form)
-            if (response.status !== 200) throw new Error("Logowanie się nie powiodło");
-            return await response.text();
+
+            if (response.status !== 201) throw new Error("Logowanie się nie powiodło");
+            else{
+                navigate('/')
+            }
+
         }
         catch{
             loginErrorNotification();
