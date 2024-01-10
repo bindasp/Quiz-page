@@ -45,4 +45,21 @@ export class QuizService {
       select: { id: true, title: true, description: true, category: true },
     });
   }
+
+  async deleteQuiz(userId: string, id: string) {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    const index = user.quizId.indexOf(id);
+    user.quizId.splice(index, 1);
+    await this.prisma.quiz.delete({ where: { id: id } });
+    delete user.id;
+    await this.prisma.user.update({ where: { id: userId }, data: user });
+  }
+
+  async updateQuiz(id: string, quiz: Quiz) {
+    const updatedQuiz = await this.prisma.quiz.update({
+      where: { id: id },
+      data: quiz,
+    });
+    return updatedQuiz;
+  }
 }

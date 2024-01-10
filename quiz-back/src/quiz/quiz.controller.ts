@@ -1,8 +1,10 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
+  Patch,
   Post,
   Query,
   UseGuards,
@@ -41,5 +43,16 @@ export class QuizController {
   @UseGuards(TokenGuard)
   getUserQuiz(@UserID() userId: string) {
     return this.quizService.getUserQuiz(userId);
+  }
+  @Delete('/:id')
+  @UseGuards(TokenGuard)
+  deleteQuiz(@UserID() userId: string, @Param('id') id: string) {
+    return this.quizService.deleteQuiz(userId, id);
+  }
+
+  @Patch('/:id')
+  @UseGuards(TokenGuard)
+  updateQuiz(@Param('id') id: string, @Body() quiz: Quiz) {
+    return this.quizService.updateQuiz(id, quiz);
   }
 }
