@@ -33,6 +33,7 @@ const EditQuiz: React.FC = () => {
             });
             if (quiz.ok) {
                 const data: quizData = await quiz.json();
+                initializeForm();
                 form.setValues({
                     title:data.title,
                     description:data.description,
@@ -40,6 +41,8 @@ const EditQuiz: React.FC = () => {
                     questions: data.questions
                 })
                 setQuizData(data);
+                console.log(data.questions[0].correctAnswers);
+                console.log(data.questions[0].incorrectAnswers);
             } else {
                 console.error('Błąd podczas pobierania quizu');
             }
@@ -65,7 +68,19 @@ const EditQuiz: React.FC = () => {
 
     };
 
+    const handleDelete = async() =>{
+        const response = await fetch(`http://localhost:3333/api/quiz/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include'
+        });
 
+        console.log(response);
+        navigate('/');
+    }
 
     const handleAddQuestion = () => {
         const newQuestion = {question: "", correctAnswers: [], incorrectAnswers: []};
@@ -142,6 +157,9 @@ const EditQuiz: React.FC = () => {
         form.setFieldValue("questions", updatedQuestions);
     }
 
+    const initializeForm = ()=>{
+
+    }
     return (
         <Stack gap="md">
             <form onSubmit={form.onSubmit(handleSubmit)}>
@@ -222,6 +240,7 @@ const EditQuiz: React.FC = () => {
                 <Stack gap="md">
                     <Button style={{width: "1000px", margin: "auto"}} onClick={handleAddQuestion}>Dodaj pytanie</Button>
                     <Button type="submit" style={{width: "1000px", margin: "auto"}}>Zapisz quiz</Button>
+                    <Button style={{width: "1000px", margin: "auto"}} onClick={handleDelete}>Usuń Quiz</Button>
 
                 </Stack>
             </form>
