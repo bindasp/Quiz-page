@@ -28,7 +28,6 @@ export class QuizController {
     return this.quizService.getRandomQuiz(parseInt(amount));
   }
   @Get('/:id')
-  @UseGuards(TokenGuard)
   hello(@Param('id') id: string) {
     return this.quizService.getQuizById(id);
   }
