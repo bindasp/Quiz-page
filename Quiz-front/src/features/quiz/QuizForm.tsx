@@ -19,7 +19,8 @@ const QuizForm: React.FC = () => {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(form.values)
+            body: JSON.stringify(form.values),
+            credentials: 'include'
         });
 
         console.log(response);
@@ -182,7 +183,7 @@ const QuizForm: React.FC = () => {
                 <Stack gap="md">
                     <Button style={{width: "1000px", margin: "auto"}} onClick={handleAddQuestion}>Dodaj pytanie</Button>
                     <Button type="submit" style={{width: "1000px", margin: "auto"}}>Zapisz quiz</Button>
-                    <Button onClick={()=>console.log(form.values)} style={{width: "1000px", margin: "auto"}}>Test</Button>
+
                 </Stack>
             </form>
         </Stack>

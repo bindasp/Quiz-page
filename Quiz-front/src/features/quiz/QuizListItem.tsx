@@ -51,8 +51,8 @@ export const QuizListItem: FC<QuizListItemProps> = memo(({item})=>{
         >
             <Card.Section>
                 <Image
-                   // src={"https://placehold.co/400x200"}
-                    src={randomImageUrl}
+                    src={"https://placehold.co/400x200"}
+                   // src={randomImageUrl}
                     h={300}
                     alt={"alt"}
                 />

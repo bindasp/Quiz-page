@@ -23,6 +23,7 @@ const Quiz: React.FC=()=>{
     const [incorrectAnswers, setIncorrectAnswers]=useState<string[]>([])
     const [points, setPoints] = useState<number>(0);
     const [cPoints, setCPoints] = useState<number[]>([]);
+    const [shuffledAnswers, setShuffledAnswers] = useState<Record<string,string[]>>({});
     useEffect(()=>{
         const fetchData = async()=>{
             const quiz = await fetch(`http://localhost:3333/api/quiz/${id}`,{
@@ -38,6 +39,7 @@ const Quiz: React.FC=()=>{
                 const data:quizData = await quiz.json();
                 setQuizData(data);
                 initializeSelectedAnswers(data.questions);
+                initializeShuffledAnswers(data.questions);
             }
             else{
                 console.error('Błąd podczas pobierania quizu');
@@ -48,23 +50,40 @@ const Quiz: React.FC=()=>{
             const initialAnswers: Record<string, string[]> = {};
 
             questions.forEach((question) => {
-                const shuffledIncorrectAnswers = shuffleArray(question.incorrectAnswers);
+                const combinedAnswers = [...question.correctAnswers, ...question.incorrectAnswers]
+
                 initialAnswers[question.question] = [];
             });
             setSelectedAnswers(initialAnswers);
         };
-        function shuffleArray<T>(array: T[]): T[] {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-            return array;
-        }
+
+        const initializeShuffledAnswers = (questions: quizData["questions"]) => {
+            const shuffledAnswers: Record<string, string[]> = {};
+
+            questions.forEach((question) => {
+                const combinedAnswers = [...question.correctAnswers, ...question.incorrectAnswers];
+                const shuffled = shuffleArray(combinedAnswers);
+
+                const correctAnswers = shuffled.slice(0, question.correctAnswers.length);
+                const incorrectAnswers = shuffled.slice(question.correctAnswers.length);
+
+                shuffledAnswers[question.question] = [...correctAnswers, ...incorrectAnswers];
+            });
+
+            setShuffledAnswers(shuffledAnswers);
+        };
 
         fetchData();
 
     },[id]);
+    function shuffleArray<T>(array: T[]): T[] {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
 
+    }
     const handleCheckboxChange = (question: string, answer:string)=>{
         setSelectedAnswers((prevSelectedAnswers)=> {
             const isSelected = prevSelectedAnswers[question].includes(answer);
@@ -154,7 +173,7 @@ const Quiz: React.FC=()=>{
                     <div key={item.question}>
                         <p>{item.question}</p>
 
-                            {(item.correctAnswers.concat(item.incorrectAnswers)).map((answer, index) => (
+                            {shuffledAnswers[item.question]?.map((answer, index) => (
 
                                 <div>
                                     <Checkbox

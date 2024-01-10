@@ -53,7 +53,7 @@ export const Header = () =>{
                 <Button onClick={()=>{navigate('./quiz/new')}}  size={"lg"}  className={"Button"}>Dodaj quiz</Button>
             </div> :
                 <div className={"Buttons"}>
-                    <Button onClick={()=>{navigate('./quiz/new')}}  size={"lg"}  className={"Button"}>Dodaj quiz</Button>
+                    <Button onClick={()=>{navigate('./quiz/new')}}  size={"lg"}  className={"Button"}>Dodaj quiz</Button>`
                 <Menu shadow={"md"}>
                     <Menu.Target>
                         <Button size={"lg"}>Konto</Button>
@@ -61,7 +61,7 @@ export const Header = () =>{
 
                     <Menu.Dropdown>
                         <Menu.Label>Ustawienia</Menu.Label>
-                        <Menu.Item leftSection={<IconSettings/>}>
+                        <Menu.Item onClick={()=>navigate('/quizzes')} leftSection={<IconSettings/>}>
                             Moje quizy
                         </Menu.Item>
                         <Menu.Item onClick={handleLogout} leftSection={<IconLogout/>}>
