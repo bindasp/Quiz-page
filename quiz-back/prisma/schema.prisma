@@ -28,8 +28,12 @@ model Quiz{
 
 type Question{
   question String
-  correctAnswers String[]
-  incorrectAnswers String[]
+  answers  Answer[]
+}
+
+type Answer{
+  answer String
+  isCorrect Boolean
 }
 
 model User{
