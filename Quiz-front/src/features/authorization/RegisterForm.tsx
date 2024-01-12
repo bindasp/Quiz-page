@@ -1,38 +1,46 @@
 import React from "react";
-import {Button, Menu, Paper, PasswordInput, Stack, Textarea, TextInput, Title} from "@mantine/core";
+import {Button, Paper, PasswordInput, Stack, TextInput, Title} from "@mantine/core";
 
 import "../styles/Forms.css";
-import {useLoginForm} from "./hooks/useLoginForm";
-import {loginErrorNotification} from "./notifications";
+import {registerErrorNotification} from "./notifications";
 import {useNavigate} from "react-router-dom";
+import {register} from "./register";
+import {hasLength, isEmail, matchesField, useForm} from "@mantine/form";
 
-
+type RegisterFormType = {
+    login:string;
+    email:string;
+    password:string;
+    confirmpassword:string
+}
 
 const RegisterForm: React.FC = () => {
-    const form = useLoginForm();
+    const form = useForm<RegisterFormType>({
+        initialValues:{
+            login:'',
+            email:'',
+            password:'',
+            confirmpassword:'',
+
+        },
+        validate:{
+            email: isEmail('Podano błędny email'),
+            confirmpassword: matchesField(
+                'password', 'Podane hasła są różne'
+            ),
+            password: hasLength({min:4, max: 16}, ("Hasło musi mieć długość od 8 do 16 znaków")),
+            login: hasLength({min:3, max:16}, ("Login musi mieć długość od 3 do 16 znaków"))
+        }
+    });
     const navigate = useNavigate();
 
-    const handleSubmit = async(event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
+    const handleSubmit = async(data:RegisterFormType) => {
         try {
-            const response = await fetch('http://localhost:3333/api/auth/signup', {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(form.values),
-                credentials: 'include'
-            })
-
-            if (response.status !== 201) throw new Error("Rejestracja się nie powiodła");
-
-            else {
-                navigate('/login');
-            }
+            await register(data);
+            navigate('/login');
         }
-        catch{
-            loginErrorNotification();
+        catch(error){
+            registerErrorNotification();
         }
     };
 
@@ -41,7 +49,7 @@ const RegisterForm: React.FC = () => {
         <Stack justify={"center"} align={"center"} gap="md">
             <Title>Zarejestruj się</Title>
 
-            <form  onSubmit={handleSubmit}>
+            <form  onSubmit={form.onSubmit(values => handleSubmit(values))}>
 
                 <Paper  shadow="xs" style={{maxWidth:"1000px", marginBottom:"20px" ,margin:"auto",padding: "16px" }}>
 
@@ -53,18 +61,21 @@ const RegisterForm: React.FC = () => {
 
                     <TextInput
                         label={`Email`}
+                        type={"email"}
                         placeholder="Podaj email"
                         {...form.getInputProps('email')}
                     />
                     <PasswordInput
                         label={"Hasło"}
+                        type={"password"}
                         placeholder={"Podaj hasło"}
                         {...form.getInputProps('password')}
                     />
                     <PasswordInput
                         label={"Potwierdź hasło"}
+                        type={"password"}
                         placeholder={"Potwierdź hasło"}
-                        {...form.getInputProps('confirmPassword')}
+                        {...form.getInputProps('confirmpassword')}
 
                     />
 

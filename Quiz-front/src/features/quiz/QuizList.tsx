@@ -17,7 +17,7 @@ const [data, setData] = useState<quizData[]>([])
 
     useEffect(() => {
         const fetchData = async () => {
-            const response = await fetch(`http://localhost:3333/api/quiz/random?amount=10`, {
+            const response = await fetch(`http://localhost:3333/api/quiz/random?amount=9`, {
                 method: 'GET',
                 headers:{
                     'Accept': 'application/json',

@@ -8,3 +8,11 @@ export const loginErrorNotification=()=>{
 
     })
 }
+export const registerErrorNotification=()=>{
+    showNotification({
+        color:'red',
+        title:'Error',
+        message:'Rejestracja się nie powiodła',
+
+    })
+}

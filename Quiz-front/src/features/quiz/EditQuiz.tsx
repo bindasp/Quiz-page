@@ -220,8 +220,10 @@ const EditQuiz: React.FC = () => {
                                 >
                                 </Checkbox>
                                 <IconX  className={"delete-icon"} style={{margin:"auto"}} onClick={()=>handleDeleteAnswer(questionIndex, answerIndex)}></IconX>
+
                             </div>
                         ))}
+
                         <div style={{display:"flex"}}>
                             <Button mr={"20px"}
                                     onClick={() => handleAddAnswer(questionIndex)}

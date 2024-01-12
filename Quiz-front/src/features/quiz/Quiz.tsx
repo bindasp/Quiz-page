@@ -158,6 +158,7 @@ const Quiz: React.FC=()=>{
 
 
     return(
+        <div>
         <Stack>
             <Title m={"auto"}>
                 {quizData?.title}
@@ -201,6 +202,7 @@ const Quiz: React.FC=()=>{
 
             <Button display={showAnswers ? "none" : ""} style={{width:"60%", margin:"auto"}} onClick={handleSubmit}>Zatwierdź odpowiedzi</Button>
         </Stack>
+        </div>
     )
 }
 

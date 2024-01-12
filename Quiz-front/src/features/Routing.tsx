@@ -7,7 +7,6 @@ import LoginForm from "./authorization/LoginForm";
 import RegisterForm from "./authorization/RegisterForm";
 import Quiz from "./quiz/Quiz";
 import {useIsLogged} from "../hooks/useIsLogged";
-import QuizResults from "./quiz/QuizResults";
 import {MyQuizzes} from "./quiz/MyQuizzes";
 import EditQuiz from "./quiz/EditQuiz";
 
@@ -52,10 +51,6 @@ const privateRoutes: RouteObject[] = [
             {
                 path: '/quiz/:id',
                 element: <Quiz/>
-            },
-            {
-              path:'/quiz/:id/results',
-              element:<QuizResults></QuizResults>
             },
             {
                 path: '/login',
