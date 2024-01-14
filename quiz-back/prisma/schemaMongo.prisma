@@ -3,26 +3,19 @@
 
 generator client {
   provider = "prisma-client-js"
+  output = "../node_modules/@prisma/clientMongo"
 }
 
 datasource db {
   provider = "mongodb"
-  url      = env("DATABASE_URL")
+  url      = env("MONGO_URL")
 }
 
-enum Category{
-  brak
-  sport
-  informatyka
-  geografia
-  filmy
-}
-
-model Quiz{
+model QuizMongo{
   id String @id @default(auto()) @map("_id") @db.ObjectId
   title String
   description String
-  category Category
+  category Int[]
   questions Question[]
 }
 
@@ -36,18 +29,4 @@ type Answer{
   isCorrect Boolean
 }
 
-model User{
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-  email String @unique
-  login String @unique
-  password String
-  quizId String[] @default([])
-}
-
-
-//
-//User;id,login,hasło,email,isAdmin
-//
-//
-//
-//
+@@collection("Quiz")

@@ -1,22 +1,75 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
-import { Quiz, User } from '@prisma/client';
+import { PrismaMongoService } from '../prisma/prisma-mongo.service';
+import { QuizMongo } from '@prisma/clientMongo';
+import { PrismaMysqlService } from '../prisma/prisma-mysql.service';
 
 @Injectable({})
 export class QuizService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prismaMongoService: PrismaMongoService,
+    private prismaMysqlService: PrismaMysqlService,
+  ) {}
 
-  async saveQuiz(userId: string, quiz: Quiz) {
-    const savedQuiz = await this.prisma.quiz.create({ data: quiz });
-    await this.prisma.user.update({
-      where: { id: userId },
-      data: { quizId: { push: savedQuiz.id } },
+  async saveQuiz(userId: number, quiz: QuizMongo) {
+    const categoryNames = quiz.category.map((c) => c.toString());
+    delete quiz.category;
+    const categories = await this.prismaMysqlService.category.findMany({
+      where: {
+        categoryName: {
+          in: categoryNames,
+        },
+      },
+      select: {
+        id: true,
+      },
     });
-    return savedQuiz;
+
+    const savedQuiz = await this.prismaMongoService.quizMongo.create({
+      data: quiz,
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        category: true,
+      },
+    });
+
+    const categoryIdsToAssign = categories.map((category) => ({
+      id: category.id,
+    }));
+
+    return this.prismaMysqlService.quizMySQL.create({
+      data: {
+        mongoId: savedQuiz.id,
+        userId: userId,
+        categories: {
+          create: categories.map((category) => ({
+            category: { connect: { id: category.id } },
+          })),
+        },
+      },
+    });
+
+    /*const savedQuiz = await this.prismaMongoService.quiz.create({
+      data: quiz,
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        category: true,
+      },
+    });
+    const createdQuiz = await this.prismaMysqlService.quiz.create({
+      data: {
+        mongoId: savedQuiz.id,
+        userId: userId,
+      },
+    });
+    return savedQuiz;*/
   }
 
   getQuizById(id: string) {
-    return this.prisma.quiz.findUnique({
+    return this.prismaMongoService.quizMongo.findUnique({
       where: {
         id: id,
       },
@@ -24,42 +77,39 @@ export class QuizService {
   }
 
   getRandomQuiz(amount: number) {
-    return this.prisma.quiz.findMany({ take: amount });
+    return this.prismaMongoService.quizMongo.findMany({ take: amount });
   }
 
-  async getUserQuiz(userId: string) {
-    const quizzes = await this.prisma.user.findUnique({
+  async getUserQuiz(userId: number) {
+    const quizzes = await this.prismaMysqlService.user.findUnique({
       where: { id: userId },
-      select: { quizId: true },
+      select: {
+        quizzes: {
+          select: {
+            mongoId: true,
+          },
+        },
+      },
     });
-    const quizIds = quizzes?.quizId || [];
-
-    const quizTable: {
-      id: string;
-      title: string;
-      description: string;
-      category: string;
-    }[] = [];
-    return this.prisma.quiz.findMany({
+    const quizIds = quizzes.quizzes.map((quiz) => quiz.mongoId);
+    //console.log(quizIds);
+    return this.prismaMongoService.quizMongo.findMany({
       where: { id: { in: quizIds } },
       select: { id: true, title: true, description: true, category: true },
     });
   }
 
   async deleteQuiz(userId: string, id: string) {
-    const user = await this.prisma.user.findUnique({ where: { id: userId } });
-    const index = user.quizId.indexOf(id);
-    user.quizId.splice(index, 1);
-    await this.prisma.quiz.delete({ where: { id: id } });
-    delete user.id;
-    await this.prisma.user.update({ where: { id: userId }, data: user });
+    await this.prismaMysqlService.quizMySQL.deleteMany({
+      where: { mongoId: id },
+    });
+    await this.prismaMongoService.quizMongo.delete({ where: { id: id } });
   }
 
-  async updateQuiz(id: string, quiz: Quiz) {
-    const updatedQuiz = await this.prisma.quiz.update({
+  async updateQuiz(id: string, quiz: QuizMongo) {
+    return await this.prismaMongoService.quizMongo.update({
       where: { id: id },
       data: quiz,
     });
-    return updatedQuiz;
   }
 }

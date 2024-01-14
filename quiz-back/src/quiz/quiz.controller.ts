@@ -10,11 +10,11 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { QuizService } from './quiz.service';
-import { Quiz } from '@prisma/client';
 import { BasicGuard } from '../auth/basic.guard';
 import { AuthService } from '../auth/auth.service';
 import { TokenGuard } from '../auth/token.guard';
 import { UserID } from '../auth/user.decorator';
+import { QuizMongo } from '@prisma/clientMongo';
 
 @Controller('quiz')
 export class QuizController {
@@ -34,13 +34,13 @@ export class QuizController {
 
   @Post()
   @UseGuards(TokenGuard)
-  saveQuiz(@UserID() userId: string, @Body() quiz: Quiz) {
+  saveQuiz(@UserID() userId: number, @Body() quiz: QuizMongo) {
     return this.quizService.saveQuiz(userId, quiz);
   }
 
   @Get()
   @UseGuards(TokenGuard)
-  getUserQuiz(@UserID() userId: string) {
+  getUserQuiz(@UserID() userId: number) {
     return this.quizService.getUserQuiz(userId);
   }
   @Delete('/:id')
@@ -51,7 +51,7 @@ export class QuizController {
 
   @Patch('/:id')
   @UseGuards(TokenGuard)
-  updateQuiz(@Param('id') id: string, @Body() quiz: Quiz) {
+  updateQuiz(@Param('id') id: string, @Body() quiz: QuizMongo) {
     return this.quizService.updateQuiz(id, quiz);
   }
 }

@@ -1,0 +1,44 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output = "../node_modules/@prisma/clientMysql"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("MYSQL_URL")
+}
+
+model User {
+  id      Int       @id @default(autoincrement())
+  email   String    @unique
+  login   String    @unique
+  password  String
+  quizzes QuizMySQL[]
+}
+
+model QuizMySQL {
+  id          Int      @id @default(autoincrement())
+  createdAt   DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id])
+  mongoId     String
+  userId      Int
+  categories  QuizCategory[]
+}
+
+model Category {
+  id           Int      @id @default(autoincrement())
+  categoryName String
+  quizzes      QuizCategory[]
+}
+
+model QuizCategory {
+  quiz       QuizMySQL     @relation(fields: [quizId], references: [id])
+  quizId     Int
+  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId Int
+
+  @@id([quizId, categoryId])
+}
