@@ -7,9 +7,8 @@ export const useQuizForm = () => {
         initialValues: {
             title:"",
             description:"",
-            questions: [{question:"", correctAnswers:[], incorrectAnswers:[]}],
+            questions: [{question:"", answers:[{answer:"", isCorrect: false}]}],
             category: QuizCategories.brak,
-
         },
 
         validate: {

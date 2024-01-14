@@ -1,209 +1,229 @@
-import {Button, Checkbox,Text, List, Menu, Paper, Radio, Stack, ThemeIcon, Title} from "@mantine/core";
-import {useNavigate, useParams} from "react-router-dom";
+import {Button, Checkbox, Group, Paper, Radio, Stack, Text, Title} from "@mantine/core";
+import {useParams} from "react-router-dom";
 import React, {useEffect, useState} from "react";
 import {QuizCategories} from "../../types/QuizCategories";
 import "../styles/Quiz.css";
-import Label = Menu.Label;
+
 
 interface quizData{
     id?:string;
     title: string;
     description:string;
     category: QuizCategories;
-    questions: {question:string, correctAnswers:string[], incorrectAnswers:string[]}[];
+    questions: {question:string, answers:{answer:string, isCorrect: boolean}[]}[];
 }
 
-const Quiz: React.FC=()=>{
-    const{id} = useParams();
-    const [quizData, setQuizData] = useState<quizData|null>(null);
-    const [selectedAnswers, setSelectedAnswers] = useState<Record<string,string[]>>({});
-    const navigate = useNavigate();
+const shuffleArray = (array: { answer: string; isCorrect: boolean }[]): { answer: string; isCorrect: boolean }[] => {
+    const shuffledArray = array.slice();
+    for (let i = shuffledArray.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]];
+    }
+    return shuffledArray;
+};
+const Quiz = ()=> {
+    const {id} = useParams();
+    const [quizData, setQuizData] = useState<quizData | null>(null);
     const [showAnswers, setShowAnswers] = useState<boolean>(false);
-    const [correctAnswers, setCorrectAnswers]=useState<string[]>([])
-    const [incorrectAnswers, setIncorrectAnswers]=useState<string[]>([])
     const [points, setPoints] = useState<number>(0);
-    const [cPoints, setCPoints] = useState<number[]>([]);
-    const [shuffledAnswers, setShuffledAnswers] = useState<Record<string,string[]>>({});
-    useEffect(()=>{
-        const fetchData = async()=>{
-            const quiz = await fetch(`http://localhost:3333/api/quiz/${id}`,{
-                method:'GET',
-                headers:{
+    const [selected, setSelected] = useState<number[][]>([])
+    const [correctAnswers, setCorrectAnswers] = useState<number[][]>([])
+    useEffect(() => {
+        const fetchData = async () => {
+            const quiz = await fetch(`http://localhost:3333/api/quiz/${id}`, {
+                method: 'GET',
+                headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
                 },
 
             });
-            if(quiz.ok)
-            {
-                const data:quizData = await quiz.json();
-                setQuizData(data);
+            if (quiz.ok) {
+                const data: quizData = await quiz.json();
+                const shuffledData = data.questions.map((question) => ({
+                    ...question,
+                    answers: shuffleArray(question.answers),
+                }));
+
+                setQuizData({...data, questions: shuffledData});
                 initializeSelectedAnswers(data.questions);
-                initializeShuffledAnswers(data.questions);
-            }
-            else{
+                initializeCorrectAnswers(shuffledData);
+            } else {
                 console.error('Błąd podczas pobierania quizu');
             }
         };
 
-        const initializeSelectedAnswers = (questions: quizData["questions"]) => {
-            const initialAnswers: Record<string, string[]> = {};
-
-            questions.forEach((question) => {
-                const combinedAnswers = [...question.correctAnswers, ...question.incorrectAnswers]
-
-                initialAnswers[question.question] = [];
-            });
-            setSelectedAnswers(initialAnswers);
-        };
-
-        const initializeShuffledAnswers = (questions: quizData["questions"]) => {
-            const shuffledAnswers: Record<string, string[]> = {};
-
-            questions.forEach((question) => {
-                const combinedAnswers = [...question.correctAnswers, ...question.incorrectAnswers];
-                const shuffled = shuffleArray(combinedAnswers);
-
-                const correctAnswers = shuffled.slice(0, question.correctAnswers.length);
-                const incorrectAnswers = shuffled.slice(question.correctAnswers.length);
-
-                shuffledAnswers[question.question] = [...correctAnswers, ...incorrectAnswers];
-            });
-
-            setShuffledAnswers(shuffledAnswers);
-        };
-
         fetchData();
 
-    },[id]);
-    function shuffleArray<T>(array: T[]): T[] {
-        for (let i = array.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]];
-        }
-        return array;
+    }, [id]);
 
-    }
-    const handleCheckboxChange = (question: string, answer:string)=>{
-        setSelectedAnswers((prevSelectedAnswers)=> {
-            const isSelected = prevSelectedAnswers[question].includes(answer);
 
-            if (isSelected) {
+    const handleCheckboxChange = (questionIndex: number, answerIndex: number) => {
+        setSelected((prevSelected) => {
+            const newSelected = [...prevSelected];
 
-                return {
-                    ...prevSelectedAnswers,
-                    [question]: prevSelectedAnswers[question].filter((selectedAnswer) => selectedAnswer !== answer),
-                };
-            } else {
+            newSelected[questionIndex][answerIndex] = 1;
 
-                return {
-                    ...prevSelectedAnswers,
-                    [question]: [...prevSelectedAnswers[question], answer],
-                };
+            console.log(selected);
 
-            }
+            return newSelected;
         });
+    };
 
-        };
+    const handleRadioChange = (questionIndex: number, answerIndex: number) => {
+        setSelected((prevSelected) => {
+            const newSelected = [...prevSelected];
+            for(let i=0; i<newSelected[questionIndex].length;  i++)
+            {
+                if(i == answerIndex)
+                {
+                    newSelected[questionIndex][answerIndex] = 1;
+                }
+                else{
+                    newSelected[questionIndex][i]=0;
+                }
+            }
+
+
+            console.log(selected);
+
+            return newSelected;
+        });
+    };
+
+
+    const initializeSelectedAnswers = ((data: quizData["questions"]) => {
+        const initialSelected: number[][] = [];
+        for (let i = 0; i < data.length; i++) {
+            const questionAnswers: number[] = Array(data[i].answers.length).fill(0);
+            initialSelected.push(questionAnswers)
+        }
+        setSelected(initialSelected);
+    });
+
+    const initializeCorrectAnswers = (data: quizData["questions"]) => {
+        const newCorrect: number[][] = [];
+
+        for (let i = 0; i < data.length; i++) {
+            newCorrect[i] = []
+            for (let j = 0; j < data[i].answers.length; j++) {
+                if (data[i].answers[j].isCorrect) {
+                    newCorrect[i][j] = 1;
+                } else {
+                    newCorrect[i][j] = 0;
+                }
+            }
+        }
+        setCorrectAnswers(newCorrect);
+    };
+
+    const calculatePoints = (userAnswers: number[][], correctAnswers: number[][]) => {
+        let totalPoints = 0;
+
+        if (userAnswers && correctAnswers) {
+            for (let i = 0; i < userAnswers.length; i++) {
+                let questionPoints =0;
+                let correctCount = correctAnswers[i].reduce((acc, current) => acc + current, 0);
+                let incorrectCount = correctAnswers[i].length - correctCount;
+                let correctSelected =0;
+                let incorrectSelected =0;
+                for(let j=0; j<userAnswers[i].length; j++){
+                    if(userAnswers[i][j]==correctAnswers[i][j] && correctAnswers[i][j] == 1)
+                    {
+                        correctSelected++;
+                    }
+                    if(userAnswers[i][j]!=correctAnswers[i][j] && userAnswers[i][j] == 1)
+                    {
+                        incorrectSelected++;
+                    }
+                }
+
+                questionPoints += correctSelected/correctCount;
+                questionPoints -= incorrectSelected/incorrectCount;
+                console.log(correctCount);
+                console.log(incorrectCount);
+                if(questionPoints<0)
+                    questionPoints=0;
+                totalPoints+=questionPoints;
+            }
+        }
+
+        return totalPoints;
+    };
+
 
     const handleSubmit = () => {
-        const newCPoints:number[] = [];
 
-        quizData?.questions.forEach((question, questionIndex) => {
-            const correctAnswers: string[] = [];
-            const incorrectAnswers: string[] = [];
-            let currentPoints = 0;
+        if (selected && correctAnswers) {
+            const newPoints = calculatePoints(selected, correctAnswers);
+            setPoints(newPoints);
 
-            const selected = selectedAnswers[question.question];
-            const correct = question.correctAnswers;
-            const incorrect = question.incorrectAnswers;
-            selected.forEach((answer)=> {
-                if(correct.includes(answer)){
-                    correctAnswers.push(answer);
-                }
-                if(incorrect.includes(answer)){
-                    incorrectAnswers.push(answer);
-                    currentPoints -= 0.25;
+            setShowAnswers(true);
+        }
 
-                }
+    }
 
-            })
-            currentPoints+= correctAnswers.length/correct.length;
-            console.log(points);
-            if(currentPoints<0) currentPoints=0;
-            setPoints((prevPoints) => prevPoints + currentPoints);
-        });
+        return (
+            <div>
+                <Stack>
+                    <Title m={"auto"}>
+                        {quizData?.title}
+                    </Title>
+                    <Text display={!showAnswers ? "none" : ""} ta={"center"}>Twój wynik
+                        to: {points}/{quizData?.questions.length}</Text>
+                    {quizData?.questions.map((item, questionIndex) => (
 
-        setCorrectAnswers(correctAnswers);
-        setIncorrectAnswers(incorrectAnswers);
-        setShowAnswers(true);
+                        <Paper
+                            withBorder={true}
+                            shadow="xs"
+                            style={{width: "60%", marginBottom: "20px", margin: "auto", padding: "16px"}}
+                            key={item.question}
+                        >
+                            <p>{item.question}</p>
+                            {correctAnswers[questionIndex].reduce((acc, current) => acc + current, 0)>1 ?
+                            <div>
+                                {item.answers.map((answer, index) => (
+                                    <div>
+                                            <Checkbox
+                                            label={answer.answer}
+                                            className={showAnswers ? (answer.isCorrect) ? "correct" : "incorrect" : ""}
+                                            color={showAnswers ? (answer.isCorrect) ? "lime" : "red" : ""}
+                                            onChange={() => handleCheckboxChange(questionIndex, index)}
 
+                                        />
+                                    </div>
+                                ))}
 
-
-    };
-
-    const isCorrectAnswer = (question: string, answer: string) => {
-        const selected = selectedAnswers[question];
-        const correct = quizData?.questions.find((q) => q.question === question)?.correctAnswers || [];
-
-        return showAnswers && selected.includes(answer) && correct.includes(answer);
-    };
-
-    const isIncorrectAnswer = (question: string, answer: string) => {
-        const selected = selectedAnswers[question];
-        const correct = quizData?.questions.find((q) => q.question === question)?.correctAnswers || [];
-        return showAnswers && selected.includes(answer) && !correct.includes(answer);
-    };
-
-
-
-    return(
-        <div>
-        <Stack>
-            <Title m={"auto"}>
-                {quizData?.title}
-            </Title>
-            <Text display={!showAnswers ? "none" : ""} ta={"center"}>Twój wynik to: {points}/{quizData?.questions.length}</Text>
-            {quizData?.questions.map((item, questionIndex) => (
-                <Paper
-                    withBorder={true}
-                    shadow="xs"
-                    style={{ width: "60%", marginBottom: "20px", margin: "auto", padding: "16px" }}
-                    key={item.question}
-                >
-                    <div key={item.question}>
-                        <p>{item.question}</p>
-
-                            {shuffledAnswers[item.question]?.map((answer, index) => (
-
+                            </div> :
                                 <div>
-                                    <Checkbox
-                                        key={`${item.question}-${index}`}
-                                        label={answer}
-                                        id={`${item.question}-${index}`}
-                                        value={answer}
-                                        checked={selectedAnswers[item.question].includes(answer)}
-                                        onChange={() =>  handleCheckboxChange(item.question, answer) }
-                                        className={(isCorrectAnswer(item.question, answer)) ? "correct" : (isIncorrectAnswer(item.question, answer)) ? "incorrect" : ""}
-                                        color = {(isCorrectAnswer(item.question, answer)) ? "lime" : (isIncorrectAnswer(item.question, answer)) ? "red" : ""}
+                                        <Radio.Group>
+                                        <Stack>
+                                            {item.answers.map((answer, index) => (
+                                                <Radio value={answer.answer} label={answer.answer}
+                                                onChange={()=>handleRadioChange(questionIndex, index)}
+                                                       color={showAnswers ? (answer.isCorrect) ? "lime" : "red" : ""}
+                                                />
 
-                                    />
+                                                ))}
+                                        </Stack>
+                                        </Radio.Group>
+
                                 </div>
-                            ))}
 
-                    </div>
+                            }
 
-                    <div>
-                        <Text ta={"center"} className={"correct-answers"}  display={showAnswers ? "" : "none"}>Poprawne odpowiedzi: {item.correctAnswers.join(', ')}</Text>
-                    </div>
+                            <div>
+                                <Text ta={"center"} className={"correct-answers"} display={showAnswers ? "" : "none"}>Poprawne
+                                    odpowiedzi: {item.answers.filter(answer => answer.isCorrect).map(answer => answer.answer).join(", ")}</Text>
+                            </div>
 
-                </Paper>
-            ))}
+                        </Paper>
+                    ))}
 
-            <Button display={showAnswers ? "none" : ""} style={{width:"60%", margin:"auto"}} onClick={handleSubmit}>Zatwierdź odpowiedzi</Button>
-        </Stack>
-        </div>
-    )
-}
-
+                    <Button display={showAnswers ? "none" : ""} style={{width: "60%", margin: "auto"}}
+                            onClick={handleSubmit}>Zatwierdź odpowiedzi</Button>
+                </Stack>
+            </div>
+        )
+    }
 export default Quiz;

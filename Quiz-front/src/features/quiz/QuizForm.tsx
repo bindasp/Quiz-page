@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Button, Checkbox, Paper, Select, Stack, Textarea, TextInput} from "@mantine/core";
 
 import {useQuizForm} from "./hooks/useQuizForm";
@@ -11,8 +11,12 @@ const QuizForm: React.FC = () => {
     const form = useQuizForm();
     const navigate = useNavigate();
     const [updatedQuestions, setUpdatedQuestions] = useState<any[]>([]);
+
+    useEffect(() => {
+       form.setFieldValue("category", QuizCategories.brak);
+    },[]);
     const handleSubmit = async () => {
-        handleBeforeSubmit();
+
         const response = await fetch(`http://localhost:3333/api/quiz`, {
             method: 'POST',
             headers: {
@@ -23,83 +27,51 @@ const QuizForm: React.FC = () => {
             credentials: 'include'
         });
 
-        console.log(response);
+        console.log(form.values);
         navigate('/');
 
     };
 
     const handleAddQuestion = () => {
-        const newQuestion = {question: "", correctAnswers: [], incorrectAnswers: []};
-        form.setFieldValue("questions", [...(form.values.questions || []), newQuestion]);
+        const Questions = form.values.questions;
+
+        const newQuestion = {
+            question: "",
+            answers: [{answer: "", isCorrect: false}]
+        };
+
+        Questions.push(newQuestion);
+
+        form.setFieldValue("questions", Questions);
     };
 
     const handleAddAnswer = (questionIndex: number) => {
-        const newAnswer = "";
+        const newAnswer ={answer: "", isCorrect: false};
         const updatedQuestions = [...form.values.questions];
-        updatedQuestions[questionIndex].incorrectAnswers = [
-            ...(form.values.questions[questionIndex]?.incorrectAnswers || []),
-            newAnswer,
-        ];
+         updatedQuestions[questionIndex].answers.push(newAnswer);
         form.setFieldValue("questions", updatedQuestions);
     };
 
-    const handleToggleCorrectAnswer = (questionIndex: number, answerIndex: number) => {
-        const updatedQuestionsCopy = [...form.values.questions];
+    const handleCheckboxClick = (questionIndex: number, answerIndex: number) => {
+        if(!form.values.questions[questionIndex].answers[answerIndex].isCorrect)
+            form.values.questions[questionIndex].answers[answerIndex].isCorrect = true;
+        else if(form.values.questions[questionIndex].answers[answerIndex].isCorrect)
+            form.values.questions[questionIndex].answers[answerIndex].isCorrect = false;
 
-        if (updatedQuestionsCopy[questionIndex] && updatedQuestionsCopy[questionIndex].incorrectAnswers) {
-            const selectedAnswer: string = updatedQuestionsCopy[questionIndex].incorrectAnswers[answerIndex];
-            const isCorrect: boolean = updatedQuestionsCopy[questionIndex].correctAnswers.includes(selectedAnswer);
-
-            if (isCorrect) {
-                updatedQuestionsCopy[questionIndex].correctAnswers = updatedQuestionsCopy[questionIndex].correctAnswers.filter(
-                    (answer: string) => answer !== selectedAnswer
-                );
-            } else {
-                updatedQuestionsCopy[questionIndex].correctAnswers = [
-                    ...updatedQuestionsCopy[questionIndex].correctAnswers,
-                    selectedAnswer,
-                ];
-            }
-
-            form.setFieldValue("questions", updatedQuestionsCopy);
-        }
     };
 
-    const handleBeforeSubmit = () => {
-        const updatedQuestionsCopy = [...form.values.questions];
-
-        updatedQuestionsCopy.forEach(question => {
-            if (question.incorrectAnswers) {
-
-                question.incorrectAnswers = question.incorrectAnswers.filter(
-                    (answer: string) => !question.correctAnswers.includes(answer)
-                );
-            }
-        });
-
-        form.setFieldValue("questions", updatedQuestionsCopy);
-    };
 
     const handleDeleteAnswer = (questionIndex: number, answerIndex: number) => {
         const updatedQuestions = [...form.values.questions];
-        const deletedAnswer = form.values.questions[questionIndex]?.incorrectAnswers[answerIndex];
-
-        updatedQuestions[questionIndex].incorrectAnswers.splice(answerIndex, 1);
-
-        updatedQuestions[questionIndex].correctAnswers = updatedQuestions[questionIndex].correctAnswers.filter(
-            (answer) => answer !== deletedAnswer
-        );
-
+        updatedQuestions[questionIndex].answers.splice(answerIndex, 1);
         form.setFieldValue("questions", updatedQuestions);
 
-        console.log(form.values);
     };
 
 
     const handleDeleteQuestion = (questionIndex:number)=>{
         const updatedQuestions = [...form.values.questions];
         updatedQuestions.splice(questionIndex, 1);
-
         form.setFieldValue("questions", updatedQuestions);
     }
 
@@ -146,7 +118,7 @@ const QuizForm: React.FC = () => {
                             placeholder="Treść pytania"
                             {...form.getInputProps(`questions.${questionIndex}.question`)}
                         />
-                        {question.incorrectAnswers && question.incorrectAnswers.map((answer, answerIndex) => (
+                        {question.answers && question.answers.map((answer, answerIndex) => (
                             <div className={"check"} key={answerIndex}>
 
                                 <TextInput
@@ -155,11 +127,12 @@ const QuizForm: React.FC = () => {
                                     c={"gray"}
                                     placeholder={"Dodaj odpowiedź"}
                                     leftSection={<IconCircle size="1rem" stroke={1.5}/>}
-                                    {...form.getInputProps(`questions.${questionIndex}.incorrectAnswers.${answerIndex}`)}
+                                    {...form.getInputProps(`questions.${questionIndex}.answers.${answerIndex}.answer`)}
 
                                 />
-                                <Checkbox m={'auto'} checked={question.correctAnswers.includes(answer)}
-                                          onChange={() => handleToggleCorrectAnswer(questionIndex, answerIndex)}
+                                <Checkbox m={'auto'}
+                                          onChange={() => handleCheckboxClick(questionIndex, answerIndex)}
+
                                 >
                                 </Checkbox>
                                 <IconX  className={"delete-icon"} style={{margin:"auto"}} onClick={()=>handleDeleteAnswer(questionIndex, answerIndex)}></IconX>

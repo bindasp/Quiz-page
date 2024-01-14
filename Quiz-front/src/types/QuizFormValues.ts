@@ -5,7 +5,7 @@ export type QuizFormValues = {
     title: string;
     description:string;
     category: QuizCategories;
-    questions: {question:string, correctAnswers:string[], incorrectAnswers:string[]}[];
+    questions: {question:string, answers:{answer:string, isCorrect: boolean}[]}[];
 
 }
 

@@ -1,6 +1,6 @@
 import {QuizFormValues} from "../../types/QuizFormValues";
 import {QuizListItem} from "./QuizListItem";
-import {SimpleGrid} from "@mantine/core";
+import {SimpleGrid, Title} from "@mantine/core";
 import React, {useEffect, useState} from "react";
 import {QuizCategories} from "../../types/QuizCategories";
 import {MyQuizzesListItem} from "./MyQuizzesListItem";
@@ -10,7 +10,7 @@ interface quizData{
     title: string;
     description:string;
     category: QuizCategories;
-    questions: {question:string, correctAnswers:string[], incorrectAnswers:string[]}[];
+    questions: {question:string, answers:[{answer:string, isCorrect: boolean}]}[];
 }
 
 export const MyQuizzes = () => {
@@ -39,6 +39,7 @@ export const MyQuizzes = () => {
     }, []);
     return(
         <div style={{width: '100%'}}>
+            <Title m={"auto"} size={75}>Moje quizy</Title>
             <SimpleGrid cols={{base:1, sm:2, lg:3}}>
                 {data.map((item)=> <MyQuizzesListItem key={item.id} item={item}/>)}
             </SimpleGrid>

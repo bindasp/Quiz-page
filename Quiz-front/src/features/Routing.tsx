@@ -20,6 +20,10 @@ const publicRoutes:RouteObject[]=[
                 element:<QuizList></QuizList>
             },
             {
+                path: '/quiz/:id',
+                element: <Quiz/>
+            },
+            {
                 path:'/login',
                 element:<LoginForm></LoginForm>
             },

@@ -12,7 +12,7 @@ interface quizData{
     title: string;
     description:string;
     category: QuizCategories;
-    questions: {question:string, correctAnswers:string[], incorrectAnswers:string[]}[];
+    questions: {question:string, answers:[{answer:string, isCorrect: boolean}]}[];
 }
 
 const EditQuiz: React.FC = () => {
@@ -21,6 +21,7 @@ const EditQuiz: React.FC = () => {
     const [updatedQuestions, setUpdatedQuestions] = useState<any[]>([]);
     const{id} = useParams();
     const [quizData, setQuizData] = useState<quizData|null>(null);
+    const [selected, setSelected] = useState<number[][]>([])
     useEffect(()=> {
         const fetchData = async () => {
             const quiz = await fetch(`http://localhost:3333/api/quiz/${id}`, {
@@ -33,26 +34,25 @@ const EditQuiz: React.FC = () => {
             });
             if (quiz.ok) {
                 const data: quizData = await quiz.json();
-                initializeForm();
                 form.setValues({
                     title:data.title,
                     description:data.description,
                     category:data.category,
-                    questions: data.questions
+                    questions:data.questions
+
                 })
                 setQuizData(data);
-                console.log(data.questions[0].correctAnswers);
-                console.log(data.questions[0].incorrectAnswers);
+
             } else {
                 console.error('Błąd podczas pobierania quizu');
             }
         };
 
+
         console.log(id);
         fetchData();
     },[]);
     const handleSubmit = async () => {
-        handleBeforeSubmit();
         const response = await fetch(`http://localhost:3333/api/quiz/${id}`, {
             method: 'PATCH',
             headers: {
@@ -83,83 +83,53 @@ const EditQuiz: React.FC = () => {
     }
 
     const handleAddQuestion = () => {
-        const newQuestion = {question: "", correctAnswers: [], incorrectAnswers: []};
-        form.setFieldValue("questions", [...(form.values.questions || []), newQuestion]);
+        const Questions = form.values.questions;
+
+        const newQuestion = {
+            question: "",
+            answers: [{answer: "", isCorrect: false}]
+        };
+
+        Questions.push(newQuestion);
+
+        form.setFieldValue("questions", Questions);
     };
 
     const handleAddAnswer = (questionIndex: number) => {
-        const newAnswer = "";
+        const newAnswer ={answer: "", isCorrect: false};
         const updatedQuestions = [...form.values.questions];
-        updatedQuestions[questionIndex].incorrectAnswers = [
-            ...(form.values.questions[questionIndex]?.incorrectAnswers || []),
-            newAnswer,
-        ];
+        updatedQuestions[questionIndex].answers.push(newAnswer);
         form.setFieldValue("questions", updatedQuestions);
     };
 
-    const handleToggleCorrectAnswer = (questionIndex: number, answerIndex: number) => {
-        const updatedQuestionsCopy = [...form.values.questions];
+    const handleCheckboxClick = (questionIndex: number, answerIndex: number) => {
+        if(!form.values.questions[questionIndex].answers[answerIndex].isCorrect)
+            form.values.questions[questionIndex].answers[answerIndex].isCorrect = true;
+        else if(form.values.questions[questionIndex].answers[answerIndex].isCorrect)
+            form.values.questions[questionIndex].answers[answerIndex].isCorrect = false;
 
-        if (updatedQuestionsCopy[questionIndex] && updatedQuestionsCopy[questionIndex].incorrectAnswers) {
-            const selectedAnswer: string = updatedQuestionsCopy[questionIndex].incorrectAnswers[answerIndex];
-            const isCorrect: boolean = updatedQuestionsCopy[questionIndex].correctAnswers.includes(selectedAnswer);
-
-            if (isCorrect) {
-                updatedQuestionsCopy[questionIndex].correctAnswers = updatedQuestionsCopy[questionIndex].correctAnswers.filter(
-                    (answer: string) => answer !== selectedAnswer
-                );
-            } else {
-                updatedQuestionsCopy[questionIndex].correctAnswers = [
-                    ...updatedQuestionsCopy[questionIndex].correctAnswers,
-                    selectedAnswer,
-                ];
-            }
-
-            form.setFieldValue("questions", updatedQuestionsCopy);
-        }
     };
+    const handleCheckboxChange = (questionIndex: number, answerIndex: number) => {
+        setSelected((prevSelected) => {
+            const newSelected = [...prevSelected];
 
-    const handleBeforeSubmit = () => {
-        const updatedQuestionsCopy = [...form.values.questions];
+            newSelected[questionIndex][answerIndex] = newSelected[questionIndex][answerIndex] === 1 ? 0 : 1;
 
-        updatedQuestionsCopy.forEach(question => {
-            if (question.incorrectAnswers) {
-
-                question.incorrectAnswers = question.incorrectAnswers.filter(
-                    (answer: string) => !question.correctAnswers.includes(answer)
-                );
-            }
+            return newSelected;
         });
-
-        form.setFieldValue("questions", updatedQuestionsCopy);
     };
-
     const handleDeleteAnswer = (questionIndex: number, answerIndex: number) => {
         const updatedQuestions = [...form.values.questions];
-        const deletedAnswer = form.values.questions[questionIndex]?.incorrectAnswers[answerIndex];
-
-        updatedQuestions[questionIndex].incorrectAnswers.splice(answerIndex, 1);
-
-        updatedQuestions[questionIndex].correctAnswers = updatedQuestions[questionIndex].correctAnswers.filter(
-            (answer) => answer !== deletedAnswer
-        );
-
+        updatedQuestions[questionIndex].answers.splice(answerIndex, 1);
         form.setFieldValue("questions", updatedQuestions);
 
-        console.log(form.values);
     };
-
-
     const handleDeleteQuestion = (questionIndex:number)=>{
         const updatedQuestions = [...form.values.questions];
         updatedQuestions.splice(questionIndex, 1);
-
         form.setFieldValue("questions", updatedQuestions);
     }
 
-    const initializeForm = ()=>{
-
-    }
     return (
         <Stack gap="md">
             <form onSubmit={form.onSubmit(handleSubmit)}>
@@ -171,7 +141,6 @@ const EditQuiz: React.FC = () => {
                         placeholder={"Podaj tytuł quizu"}
                         {...form.getInputProps('title')}
                     />
-
                     <Select
                         label={"Kategoria"}
                         placeholder={"Brak kategorii"}
@@ -187,7 +156,6 @@ const EditQuiz: React.FC = () => {
 
                 </div>
                 <Textarea
-
                     label={"Opis"}
                     placeholder={"Dodaj opis"}
                     style={{minHeight: "80px", maxWidth: "1000px", margin: "auto"}}
@@ -195,7 +163,7 @@ const EditQuiz: React.FC = () => {
                 />
 
                 {form.values.questions && form.values.questions.map((question, questionIndex) => (
-                    <Paper key={questionIndex} withBorder={true} shadow="xs"
+                    <Paper mt={20} key={questionIndex} withBorder={true} shadow="xs"
                            style={{maxWidth: "1000px", marginBottom: "20px", margin: "auto", padding: "16px"}}>
                         <TextInput
                             label={"Pytanie " + (questionIndex + 1)}
@@ -203,20 +171,23 @@ const EditQuiz: React.FC = () => {
                             placeholder="Treść pytania"
                             {...form.getInputProps(`questions.${questionIndex}.question`)}
                         />
-                        {question.incorrectAnswers && question.incorrectAnswers.map((answer, answerIndex) => (
+                        {question.answers && question.answers.map((answer, answerIndex) => (
                             <div className={"check"} key={answerIndex}>
 
                                 <TextInput
+                                  //  variant={"unstyled"}
+                                    className={"answer"}
                                     w={1000}
                                     key={answerIndex}
                                     c={"gray"}
                                     placeholder={"Dodaj odpowiedź"}
                                     leftSection={<IconCircle size="1rem" stroke={1.5}/>}
-                                    {...form.getInputProps(`questions.${questionIndex}.incorrectAnswers.${answerIndex}`)}
+                                    {...form.getInputProps(`questions.${questionIndex}.answers.${answerIndex}.answer`)}
 
                                 />
-                                <Checkbox m={'auto'} checked={question.correctAnswers.includes(answer)}
-                                          onChange={() => handleToggleCorrectAnswer(questionIndex, answerIndex)}
+                                <Checkbox m={'auto'} defaultChecked={question.answers[answerIndex].isCorrect}
+
+                                          onChange={() => handleCheckboxClick(questionIndex, answerIndex)}
                                 >
                                 </Checkbox>
                                 <IconX  className={"delete-icon"} style={{margin:"auto"}} onClick={()=>handleDeleteAnswer(questionIndex, answerIndex)}></IconX>
@@ -235,12 +206,14 @@ const EditQuiz: React.FC = () => {
                                 onClick={() => handleDeleteQuestion(questionIndex)}
                                 style={{width: "20%", marginTop: "10px"}}
                             >Usuń pytanie</Button>
+
+
                         </div>
                     </Paper>
                 ))}
 
                 <Stack gap="md">
-                    <Button style={{width: "1000px", margin: "auto"}} onClick={handleAddQuestion}>Dodaj pytanie</Button>
+                    <Button  style={{width: "1000px", margin:"auto", marginTop:"20px"}} onClick={handleAddQuestion}>Dodaj pytanie</Button>
                     <Button type="submit" style={{width: "1000px", margin: "auto"}}>Zapisz quiz</Button>
                     <Button style={{width: "1000px", margin: "auto"}} onClick={handleDelete}>Usuń Quiz</Button>
 

@@ -3,6 +3,7 @@ import {Button, Menu, NavLink} from "@mantine/core";
 import {useNavigate} from "react-router-dom";
 import "../features/styles/Header.css";
 import {useIsLogged} from "../hooks/useIsLogged";
+import {QuizCategories} from "../types/QuizCategories";
 
 export const Header = () =>{
     const isLogged = useIsLogged();
@@ -20,7 +21,6 @@ export const Header = () =>{
                 credentials: 'include'
             })
 
-
             navigate('/')
             if (response.status !== 200) throw new Error("Logowanie się nie powiodło");
 
@@ -29,7 +29,6 @@ export const Header = () =>{
         catch (e){
             console.log(e);
         }
-
     }
 
     return(
@@ -45,6 +44,26 @@ export const Header = () =>{
                     leftSection={<IconHome2 size="1rem" stroke={1.5}
                     />}
                 >Quizy</Button>
+                {isLogged ?
+                <Menu trigger={"hover"} width={200}>
+                    <Menu.Target>
+                        <Button
+                            size={"lg"}
+                            bg={'blue'}
+                            c={'white'}
+                            style={{marginLeft:'30px', width:'200px', height:"50px", marginTop:'25px'}}
+                            fw={800}
+                        >
+                            Kategorie</Button>
+                    </Menu.Target>
+
+                    <Menu.Dropdown>
+                        {Object.values(QuizCategories).map((category)=>(
+                            <Menu.Item key={category} >{category}</Menu.Item>
+                        ))}
+                    </Menu.Dropdown>
+                </Menu> : ""}
+
 
             </div>
             {!isLogged ? <div className={"Buttons"}>

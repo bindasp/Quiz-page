@@ -10,12 +10,7 @@
 .mantine-Checkbox-root{
     margin-bottom: 5px;
 }
-.correct{
-    color:green;
-}
-.incorrect{
-    color:red;
-}
+
 .disabled{
     color:red;
 }

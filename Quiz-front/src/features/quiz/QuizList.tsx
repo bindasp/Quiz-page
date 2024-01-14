@@ -9,7 +9,7 @@ interface quizData{
     title: string;
     description:string;
     category: QuizCategories;
-    questions: {question:string, correctAnswers:string[], incorrectAnswers:string[]}[];
+    questions: {question:string, answers:[{answer:string, isCorrect: boolean}]}[];
 }
 
 export const QuizList = () => {
@@ -34,7 +34,7 @@ const [data, setData] = useState<quizData[]>([])
             }
         }
         fetchData();
-    }, []);
+    }, );
   return(
       <div style={{width: '100%'}}>
         <SimpleGrid cols={{base:1, sm:2, lg:3}}>
