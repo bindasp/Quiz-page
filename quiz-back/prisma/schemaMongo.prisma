@@ -15,7 +15,7 @@ model QuizMongo{
   id String @id @default(auto()) @map("_id") @db.ObjectId
   title String
   description String
-  category Int[]
+  category String[]
   questions Question[]
 }
 
@@ -28,5 +28,3 @@ type Answer{
   answer String
   isCorrect Boolean
 }
-
-@@collection("Quiz")

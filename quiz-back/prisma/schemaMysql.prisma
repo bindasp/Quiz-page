@@ -23,7 +23,7 @@ model QuizMySQL {
   id          Int      @id @default(autoincrement())
   createdAt   DateTime @default(now())
   user        User     @relation(fields: [userId], references: [id])
-  mongoId     String
+  mongoId     String   @unique
   userId      Int
   categories  QuizCategory[]
 }

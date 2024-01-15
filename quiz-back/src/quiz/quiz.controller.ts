@@ -24,7 +24,10 @@ export class QuizController {
   ) {}
 
   @Get('random')
-  getRandomQuiz(@Query('amount') amount: string) {
+  getRandomQuiz(
+    @Query('amount') amount: string,
+    @Query('category') category: string,
+  ) {
     return this.quizService.getRandomQuiz(parseInt(amount));
   }
   @Get('/:id')
@@ -40,7 +43,7 @@ export class QuizController {
 
   @Get()
   @UseGuards(TokenGuard)
-  getUserQuiz(@UserID() userId: number) {
+  getUserQuiz(@UserID() userId: number, @Query('category') category: string) {
     return this.quizService.getUserQuiz(userId);
   }
   @Delete('/:id')
