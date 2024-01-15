@@ -94,8 +94,8 @@ export class QuizService {
     return quizMongo;
   }
 
-  async getRandomQuiz(amount: number) {
-    const quizMongo = await this.prismaMongoService.quizMongo.findMany({
+  async getRandomQuiz(amount: number, category: string) {
+    /*const quizMongo = await this.prismaMongoService.quizMongo.findMany({
       take: amount,
       select: {
         id: true,
@@ -125,12 +125,97 @@ export class QuizService {
       }
     });
 
+    return quizMongo;*/
+    const quizMySQL = await this.prismaMysqlService.quizMySQL.findMany({
+      take: amount,
+      where: {
+        categories: {
+          some: { category: { categoryName: { contains: category } } },
+        },
+      },
+      select: {
+        mongoId: true,
+        categories: {
+          select: {
+            category: true,
+          },
+        },
+      },
+    });
+
+    const mongoIds = quizMySQL.map((quiz) => quiz.mongoId);
+
+    const quizMongo = await this.prismaMongoService.quizMongo.findMany({
+      where: {
+        id: { in: mongoIds },
+      },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        category: true,
+      },
+    });
+
+    quizMongo.forEach((q) => {
+      const matchingQuizMySQL = quizMySQL.find((qm) => qm.mongoId === q.id);
+
+      if (matchingQuizMySQL) {
+        q.category = matchingQuizMySQL.categories.map(
+          (c) => c.category.categoryName,
+        );
+      }
+    });
     return quizMongo;
   }
 
-  async getUserQuiz(userId: number) {
-    const quizzes = await this.prismaMysqlService.user.findUnique({
-      where: { id: userId },
+  async getUserQuiz(userId: number, category: string) {
+    const quizMySQL = await this.prismaMysqlService.quizMySQL.findMany({
+      where: {
+        userId: userId,
+        categories: {
+          some: { category: { categoryName: { contains: category } } },
+        },
+      },
+      select: {
+        mongoId: true,
+        categories: {
+          select: {
+            category: true,
+          },
+        },
+      },
+    });
+    console.log(quizMySQL);
+    const mongoIds = quizMySQL.map((quiz) => quiz.mongoId);
+
+    const quizMongo = await this.prismaMongoService.quizMongo.findMany({
+      where: {
+        id: { in: mongoIds },
+      },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        category: true,
+      },
+    });
+
+    quizMongo.forEach((q) => {
+      const matchingQuizMySQL = quizMySQL.find((qm) => qm.mongoId === q.id);
+
+      if (matchingQuizMySQL) {
+        q.category = matchingQuizMySQL.categories.map(
+          (c) => c.category.categoryName,
+        );
+      }
+    });
+
+    return quizMongo;
+    /*const quizzes = await this.prismaMysqlService.user.findUnique({
+      where: {
+        id: userId,
+      },
       select: {
         quizzes: {
           select: {
@@ -167,7 +252,7 @@ export class QuizService {
       }
     });
 
-    return quizMongo;
+    return quizMongo;*/
   }
 
   async deleteQuiz(userId: string, id: string) {
