@@ -1,20 +1,28 @@
 import React, {useEffect, useState} from "react";
-import {Button, Checkbox, Paper, Select, Stack, Textarea, TextInput} from "@mantine/core";
+import {Button, Checkbox, MultiSelect, Paper, rem, Stack, Textarea, TextInput} from "@mantine/core";
 
 import {useQuizForm} from "./hooks/useQuizForm";
 import {IconCircle, IconX} from "@tabler/icons-react";
-import {QuizCategories} from "../../types/QuizCategories";
 import {useNavigate} from "react-router-dom";
 import "../styles/Forms.css"
+
+interface categoryData{
+    id:number,
+    categoryName: string
+}
 
 const QuizForm: React.FC = () => {
     const form = useQuizForm();
     const navigate = useNavigate();
     const [updatedQuestions, setUpdatedQuestions] = useState<any[]>([]);
-
+    const [category, setCategory] = useState<string[]>([])
+    const [categories, setCategories] = useState<string[]>([])
     useEffect(() => {
-       form.setFieldValue("category", QuizCategories.brak);
+        console.log(categories)
+        getCategories();
+
     },[]);
+
     const handleSubmit = async () => {
 
         const response = await fetch(`http://localhost:3333/api/quiz`, {
@@ -31,6 +39,26 @@ const QuizForm: React.FC = () => {
         navigate('/');
 
     };
+
+    const getCategories = async ()=>{
+        const response = await fetch(`http://localhost:3333/api/category`,{
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+
+        })
+        if(response.ok){
+            const cat:categoryData[] = await response.json();
+            const newCategories:string[] = [];
+            cat.map(value => {
+                newCategories.push(value.categoryName);
+            })
+            setCategories(newCategories);
+
+        }
+    }
 
     const handleAddQuestion = () => {
         const Questions = form.values.questions;
@@ -75,34 +103,46 @@ const QuizForm: React.FC = () => {
         form.setFieldValue("questions", updatedQuestions);
     }
 
+    const handleSelectCategory = (category:string[])=>{
+
+        setCategory(category);
+
+        form.setFieldValue("category", category);
+    }
+
     return (
-        <Stack gap="md">
+        <Stack  gap="md">
             <form onSubmit={form.onSubmit(handleSubmit)}>
-                <div style={{display: "flex", margin: "auto", maxWidth: "1000px"}}>
+                <div style={{display: "flex", margin: "auto", maxWidth: "1000px",marginBottom: "15px"}}>
                     <TextInput
-                        style={{marginBottom: "15px", width: "500px",}}
+                        style={{width: "480px", marginRight:"50px"}}
                         withAsterisk
                         label={"Tytuł"}
                         placeholder={"Podaj tytuł quizu"}
                         {...form.getInputProps('title')}
                     />
 
-                    <Select
+                    <MultiSelect
                         label={"Kategoria"}
-                        placeholder={"Brak kategorię"}
-                        data={Object.entries(QuizCategories).map(([key, value]) => (
+                        placeholder={"Wybierz kategorię"}
+                        checkIconPosition={"right"}
+                        maxValues={3}
+                        style={{width: "480px", alignContent:"flex-end"}}
+                        data={categories.map((value) => (
                             {
-                                label: value.toString(),
-                                value: key,
+                                label: value,
+                                value: value,
                             }
                         ))}
-                        {...form.getInputProps("category")}
-
+                        value={category}
+                        defaultValue={['Brak']}
+                        //{...form.getInputProps("category")}
+                        onChange={(value)=> value && handleSelectCategory(value)}
+                        clearable
                     />
 
                 </div>
                 <Textarea
-
                     label={"Opis"}
                     placeholder={"Dodaj opis"}
                     style={{minHeight: "80px", maxWidth: "1000px", margin: "auto"}}
@@ -110,25 +150,26 @@ const QuizForm: React.FC = () => {
                 />
 
                 {form.values.questions && form.values.questions.map((question, questionIndex) => (
-                    <Paper key={questionIndex} withBorder={true} shadow="xs"
-                           style={{maxWidth: "1000px", marginBottom: "20px", margin: "auto", padding: "16px"}}>
+                    <Paper mt={10} key={questionIndex} withBorder={true} shadow="xs"
+                           style={{maxWidth: "1000px", margin: "auto", padding: "16px"}}>
                         <TextInput
                             label={"Pytanie " + (questionIndex + 1)}
                             withAsterisk
                             placeholder="Treść pytania"
                             {...form.getInputProps(`questions.${questionIndex}.question`)}
+                            mb={10}
+
                         />
                         {question.answers && question.answers.map((answer, answerIndex) => (
-                            <div className={"check"} key={answerIndex}>
+                            <div className={"check"} key={answerIndex} style={{marginTop:"5px"}}>
 
                                 <TextInput
                                     w={1000}
                                     key={answerIndex}
                                     c={"gray"}
                                     placeholder={"Dodaj odpowiedź"}
-                                    leftSection={<IconCircle size="1rem" stroke={1.5}/>}
                                     {...form.getInputProps(`questions.${questionIndex}.answers.${answerIndex}.answer`)}
-
+                                    mr={5}
                                 />
                                 <Checkbox m={'auto'}
                                           onChange={() => handleCheckboxClick(questionIndex, answerIndex)}
@@ -153,11 +194,11 @@ const QuizForm: React.FC = () => {
                     </Paper>
                 ))}
 
-                <Stack gap="md">
-                    <Button style={{width: "1000px", margin: "auto"}} onClick={handleAddQuestion}>Dodaj pytanie</Button>
-                    <Button type="submit" style={{width: "1000px", margin: "auto"}}>Zapisz quiz</Button>
+                <div style={{display:"flex", maxWidth:"1000px", margin:"auto"}}>
+                    <Button style={{marginTop:"15px", width:"20%", marginRight:"auto"}} onClick={handleAddQuestion}>Dodaj pytanie</Button>
+                    <Button type="submit" style={{marginTop:"15px", width:"20%", marginLeft:"auto"}}>Zapisz quiz</Button>
 
-                </Stack>
+                </div>
             </form>
         </Stack>
     );

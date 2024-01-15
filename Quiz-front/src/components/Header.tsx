@@ -35,9 +35,8 @@ export const Header = () =>{
         <div className={"Header"}>
             <div className={"Logo"}>
                 <Button className={"quizy"}
+
                     size={"lg"}
-                    bg={'blue'}
-                    c={'white'}
                         style={{marginLeft:'30px', width:'200px', height:"50px", marginTop:'25px'}}
                     fw={800}
                     onClick={() => {navigate('/')}}
@@ -49,8 +48,8 @@ export const Header = () =>{
                     <Menu.Target>
                         <Button
                             size={"lg"}
-                            bg={'blue'}
-                            c={'white'}
+                            //bg={'blue'}
+
                             style={{marginLeft:'30px', width:'200px', height:"50px", marginTop:'25px'}}
                             fw={800}
                         >

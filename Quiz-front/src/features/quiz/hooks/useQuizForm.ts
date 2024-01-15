@@ -8,18 +8,18 @@ export const useQuizForm = () => {
             title:"",
             description:"",
             questions: [{question:"", answers:[{answer:"", isCorrect: false}]}],
-            category: QuizCategories.brak,
+            category:  ["brak"],
         },
 
         validate: {
             title :(value) => {
                 if(value.length<3){
-                    return "title must be at least 3 characters long"
+                    return "Tytuł musi zawierać conajmniej 3 znaki"
                 }
             },
             questions : (questions)=> {
                 if(!questions ||  questions.length<1){
-                    return "At least one question is required"
+                    return "Quiz musi zawierać conajmniej jedno pytanie"
                 }
             },
 

@@ -43,11 +43,11 @@ export const QuizListItem: FC<QuizListItemProps> = memo(({item})=>{
         <Tooltip
             position="bottom"
             label={item.description}
-            bg={'blue'}
+            //bg={'blue'}
             withArrow
             openDelay={400}
         >
-        <Card className={'quiz'}  c={"white"} bg={"blue"} shadow={"sm"} onClick={handleOnClick}
+        <Card className={'quiz'}   shadow={"sm"} onClick={handleOnClick}
         >
             <Card.Section>
                 <Image

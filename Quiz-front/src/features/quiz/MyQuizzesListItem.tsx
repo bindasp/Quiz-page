@@ -29,7 +29,7 @@ export const MyQuizzesListItem: FC<QuizListItemProps> = memo(({item})=>{
             withArrow
             openDelay={400}
         >
-            <Card className={'quiz'}  c={"white"} bg={"blue"} shadow={"sm"} onClick={handleOnClick}
+            <Card className={'quiz'}  shadow={"sm"} onClick={handleOnClick}
             >
                 <Card.Section>
                     <Image

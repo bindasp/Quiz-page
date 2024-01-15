@@ -11,7 +11,7 @@ interface quizData{
     id?:string;
     title: string;
     description:string;
-    category: QuizCategories;
+    category: string[];
     questions: {question:string, answers:[{answer:string, isCorrect: boolean}]}[];
 }
 

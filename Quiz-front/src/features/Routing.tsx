@@ -32,6 +32,10 @@ const publicRoutes:RouteObject[]=[
                 element:<RegisterForm></RegisterForm>
             },
             {
+                path:'/quiz/new',
+                element:<LoginForm></LoginForm>
+            },
+            {
                 path: '*',
                 element: <Navigate to ='/login' replace/>
             }

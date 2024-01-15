@@ -1,8 +1,7 @@
 .quiz:hover{
-    transform: scale(1.1);
+    transform: scale(1.01);
     z-index: 1;
 }
-
 
 .check{
     display: flex;
