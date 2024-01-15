@@ -30,7 +30,13 @@ export const Header = () =>{
             console.log(e);
         }
     }
+    const handleSelectCategory = async(category: string)=>{
+        const searchParams = new URLSearchParams();
 
+        searchParams.append('category', category);
+        navigate(`/?${searchParams.toString()}`);
+
+    }
     return(
         <div className={"Header"}>
             <div className={"Logo"}>
@@ -58,7 +64,7 @@ export const Header = () =>{
 
                     <Menu.Dropdown>
                         {Object.values(QuizCategories).map((category)=>(
-                            <Menu.Item key={category} >{category}</Menu.Item>
+                            <Menu.Item key={category} onClick={()=>handleSelectCategory(category)}>{category}</Menu.Item>
                         ))}
                     </Menu.Dropdown>
                 </Menu> : ""}

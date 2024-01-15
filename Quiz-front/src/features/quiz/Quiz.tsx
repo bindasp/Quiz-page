@@ -48,6 +48,7 @@ const Quiz = ()=> {
                 setQuizData({...data, questions: shuffledData});
                 initializeSelectedAnswers(data.questions);
                 initializeCorrectAnswers(shuffledData);
+
             } else {
                 console.error('Błąd podczas pobierania quizu');
             }
