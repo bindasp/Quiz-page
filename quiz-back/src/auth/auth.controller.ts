@@ -8,6 +8,7 @@ import { UserID } from './user.decorator';
 import { TokenService } from '../token/token.service';
 import { Response } from 'express';
 import { TokenGuard } from './token.guard';
+import { IsAdmin } from './admin.decorator.tx';
 
 @Controller('auth')
 export class AuthController {
@@ -23,13 +24,20 @@ export class AuthController {
 
   @Post('signin')
   @UseGuards(BasicGuard)
-  signin(@UserID() userId: string, @Res({ passthrough: true }) res: Response) {
-    const token = this.tokenService.createToken(userId);
+  signin(
+    @UserID() userId: string,
+    @IsAdmin() isAdmin: boolean,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const token = this.tokenService.createToken(userId, isAdmin);
     res.cookie('access-token', token, {
       httpOnly: true,
       expires: new Date(Date.now() + 60 * 60 * 1000),
     });
     res.cookie('is-logged', true, {
+      expires: new Date(Date.now() + 60 * 60 * 1000),
+    });
+    res.cookie('is-admin', isAdmin, {
       expires: new Date(Date.now() + 60 * 60 * 1000),
     });
   }

@@ -38,7 +38,7 @@ export class AuthService {
   async signin(dto: LoginDto) {
     const user = await this.prismaMysqlService.user.findUnique({
       where: { login: dto.login },
-      select: { id: true, login: true, password: true },
+      select: { id: true, login: true, password: true, isAdmin: true },
     });
     if (!user) throw new ForbiddenException('Credentials incorrect');
 

@@ -48,7 +48,7 @@ export class QuizController {
   }
   @Delete('/:id')
   @UseGuards(TokenGuard)
-  deleteQuiz(@UserID() userId: string, @Param('id') id: string) {
+  deleteQuiz(@UserID() userId: number, @Param('id') id: string) {
     return this.quizService.deleteQuiz(userId, id);
   }
 

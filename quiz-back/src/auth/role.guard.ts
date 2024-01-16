@@ -1,0 +1,26 @@
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { Observable } from 'rxjs';
+import { TokenService } from '../token/token.service';
+@Injectable()
+export class RoleGuard implements CanActivate {
+  constructor(private readonly tokenService: TokenService) {}
+  canActivate(
+    context: ExecutionContext,
+  ): boolean | Promise<boolean> | Observable<boolean> {
+    const request = context.switchToHttp().getRequest();
+    const token = request.cookies['access-token'];
+    if (!token) throw new UnauthorizedException();
+    try {
+      const payload = this.tokenService.verifyToken(token);
+      request.userId = payload.sub;
+      return payload.isAdmin;
+    } catch (e) {
+      throw new UnauthorizedException();
+    }
+  }
+}

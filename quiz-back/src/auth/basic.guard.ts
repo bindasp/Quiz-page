@@ -30,6 +30,7 @@ export class BasicGuard implements CanActivate {
 
     if (!user) return false;
     request.userId = user.id;
+    request.isAdmin = user.isAdmin;
     return true;
   }
 }

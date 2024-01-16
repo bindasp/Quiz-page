@@ -23,7 +23,6 @@ export class QuizService {
         id: true,
       },
     });
-    console.log(categories);
     const savedQuiz = await this.prismaMongoService.quizMongo.create({
       data: quiz,
       select: {
@@ -186,7 +185,6 @@ export class QuizService {
         },
       },
     });
-    console.log(quizMySQL);
     const mongoIds = quizMySQL.map((quiz) => quiz.mongoId);
 
     const quizMongo = await this.prismaMongoService.quizMongo.findMany({
@@ -255,7 +253,7 @@ export class QuizService {
     return quizMongo;*/
   }
 
-  async deleteQuiz(userId: string, id: string) {
+  async deleteQuiz(userId: number, id: string) {
     await this.prismaMysqlService.quizMySQL.deleteMany({
       where: { mongoId: id },
     });

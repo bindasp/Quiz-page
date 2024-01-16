@@ -5,6 +5,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { ConfigModule } from '@nestjs/config';
 import { TokenModule } from './token/token.module';
 import { CategoryModule } from './category/category.module';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { CategoryModule } from './category/category.module';
     ConfigModule.forRoot({ isGlobal: true }),
     TokenModule,
     CategoryModule,
+    AdminModule,
   ],
 })
 export class AppModule {}
