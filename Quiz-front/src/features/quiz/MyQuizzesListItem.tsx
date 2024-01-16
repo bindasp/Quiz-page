@@ -41,7 +41,7 @@ export const MyQuizzesListItem: FC<QuizListItemProps> = memo(({item})=>{
                 </Card.Section>
 
                 <Text key={item.id} fw={500} size={"lg"} mt={"md"}>
-                    {item.title}  {item.category}
+                    {item.title}
                 </Text>
 
             </Card>

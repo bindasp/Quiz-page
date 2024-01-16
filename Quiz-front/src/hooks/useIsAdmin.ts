@@ -1,6 +1,6 @@
 import Cookies from 'universal-cookie';
-export const useIsLogged= ()=>{
+export const useIsAdmin= ()=>{
     const cookies= new Cookies();
-    return cookies.get('is-logged');
+    return cookies.get('is-admin');
 
 }

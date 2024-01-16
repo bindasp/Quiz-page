@@ -9,6 +9,8 @@ import Quiz from "./quiz/Quiz";
 import {useIsLogged} from "../hooks/useIsLogged";
 import {MyQuizzes} from "./quiz/MyQuizzes";
 import EditQuiz from "./quiz/EditQuiz";
+import {Admin} from "./quiz/Admin";
+import {useIsAdmin} from "../hooks/useIsAdmin";
 
 const publicRoutes:RouteObject[]=[
     {
@@ -84,8 +86,70 @@ const privateRoutes: RouteObject[] = [
     }
 ]
 
+const adminRoutes: RouteObject[] = [
+    {
+        path:"/",
+        element: <Layout/>,
+        children:[
+            {
+                path:'/',
+                element: <QuizList/>
+            },
+            {
+                path: '/quiz/new',
+                element: <QuizForm/>
+            },
+            {
+                path: '/quiz/:id',
+                element: <Quiz/>
+            },
+            {
+                path: '/login',
+                element: <LoginForm/>
+            },
+            {
+                path: '/register',
+                element: <RegisterForm/>
+            },
+            {
+                path:'/quizzes',
+                element: <MyQuizzes></MyQuizzes>
+            },
+            {
+                path:'/quiz/:id/edit',
+                element: <EditQuiz></EditQuiz>
+            },
+            {
+              path:'/admin',
+              element: <Admin></Admin>
+            },
+            {
+                path: '*',
+                element: <ErrorPage/>
+            }
+        ]
+    }
+]
+
 export const Routing = () => {
     const isLogged = useIsLogged();
-    const routes = isLogged ? privateRoutes:publicRoutes;
+    const isAdmin = useIsAdmin();
+
+    let routes;
+
+    if(isLogged == true && isAdmin==true)
+    {
+        routes = adminRoutes;
+    }
+    else if(isLogged==true&& isAdmin==false)
+    {
+        routes = privateRoutes;
+    }
+    else
+    {
+        routes = publicRoutes;
+    }
+
+
     return useRoutes(routes);
 }

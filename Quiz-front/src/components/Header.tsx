@@ -1,13 +1,15 @@
-import {IconHome2, IconLogout, IconSettings} from "@tabler/icons-react";
-import {Button, Menu, NavLink} from "@mantine/core";
+import {IconHome2, IconLogout, IconSettings, IconSquareRoundedLetterA} from "@tabler/icons-react";
+import {Button, Menu} from "@mantine/core";
 import {useNavigate} from "react-router-dom";
 import "../features/styles/Header.css";
 import {useIsLogged} from "../hooks/useIsLogged";
 import {QuizCategories} from "../types/QuizCategories";
+import {useIsAdmin} from "../hooks/useIsAdmin";
 
 export const Header = () =>{
     const isLogged = useIsLogged();
     const navigate = useNavigate();
+    const isAdmin = useIsAdmin();
 
     const handleLogout = async()=> {
 
@@ -88,6 +90,12 @@ export const Header = () =>{
                         <Menu.Item onClick={()=>navigate('/quizzes')} leftSection={<IconSettings/>}>
                             Moje quizy
                         </Menu.Item>
+                        {isAdmin==true ?
+                            <Menu.Item onClick={()=>navigate('/admin')} leftSection={<IconSquareRoundedLetterA/>}>
+                                Panel administracyjny
+                            </Menu.Item>
+                        : ""}
+
                         <Menu.Item onClick={handleLogout} leftSection={<IconLogout/>}>
                             Wyloguj się
                         </Menu.Item>
