@@ -16,7 +16,7 @@ export const MyQuizzesListItem: FC<QuizListItemProps> = memo(({item})=>{
     const navigate = useNavigate();
     const handleOnClick = async() => {
         if(item.id !== undefined)
-            navigate(`/quiz/${item.id}/edit`)
+            navigate(`/quiz/${item.id}/edit`, {state:{quizItem: item}})
 
     }
 
@@ -41,7 +41,7 @@ export const MyQuizzesListItem: FC<QuizListItemProps> = memo(({item})=>{
                 </Card.Section>
 
                 <Text key={item.id} fw={500} size={"lg"} mt={"md"}>
-                    {item.title}
+                    {item.title}  {item.category}
                 </Text>
 
             </Card>

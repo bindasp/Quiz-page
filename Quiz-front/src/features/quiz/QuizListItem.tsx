@@ -3,7 +3,6 @@ import React, {FC, memo, useEffect, useState} from "react";
 import {Card, Image, Text, Tooltip} from "@mantine/core";
 import "../styles/Forms.css";
 import {useNavigate} from "react-router-dom";
-import Quiz from "./Quiz";
 
 interface QuizListItemProps{
     item: QuizFormValues;
@@ -34,7 +33,7 @@ export const QuizListItem: FC<QuizListItemProps> = memo(({item})=>{
     const navigate = useNavigate();
     const handleOnClick = async() => {
         if(item.id !== undefined)
-            navigate(`/quiz/${item.id}`)
+            navigate(`/quiz/${item.id}`, {state:{quizItem: item}})
 
     }
 
@@ -43,7 +42,6 @@ export const QuizListItem: FC<QuizListItemProps> = memo(({item})=>{
         <Tooltip
             position="bottom"
             label={item.description}
-            //bg={'blue'}
             withArrow
             openDelay={400}
         >

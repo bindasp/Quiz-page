@@ -1,5 +1,5 @@
 import {Button, Checkbox, Group, Paper, Radio, Stack, Text, Title} from "@mantine/core";
-import {useParams} from "react-router-dom";
+import {useLocation, useParams} from "react-router-dom";
 import React, {useEffect, useState} from "react";
 import {QuizCategories} from "../../types/QuizCategories";
 import "../styles/Quiz.css";
@@ -28,6 +28,8 @@ const Quiz = ()=> {
     const [points, setPoints] = useState<number>(0);
     const [selected, setSelected] = useState<number[][]>([])
     const [correctAnswers, setCorrectAnswers] = useState<number[][]>([])
+    const location = useLocation();
+    const quizItem = location.state?.quizItem;
     useEffect(() => {
         const fetchData = async () => {
             const quiz = await fetch(`http://localhost:3333/api/quiz/${id}`, {
@@ -168,7 +170,7 @@ const Quiz = ()=> {
             <div>
                 <Stack>
                     <Title m={"auto"}>
-                        {quizData?.title}
+                        {quizItem.title}
                     </Title>
                     <Text display={!showAnswers ? "none" : ""} ta={"center"}>Twój wynik
                         to: {points}/{quizData?.questions.length}</Text>
@@ -212,11 +214,14 @@ const Quiz = ()=> {
                                 </div>
 
                             }
+                            {showAnswers ?
+                                <div className={"correct-answers"}>
+                                    Poprawne odpowiedzi: {item.answers.filter(answer => answer.isCorrect).map(answer => answer.answer).join(", ")}
+                                </div>
+                                : <div></div>
 
-                            <div>
-                                <Text ta={"center"} className={"correct-answers"} display={showAnswers ? "" : "none"}>Poprawne
-                                    odpowiedzi: {item.answers.filter(answer => answer.isCorrect).map(answer => answer.answer).join(", ")}</Text>
-                            </div>
+
+                    }
 
                         </Paper>
                     ))}

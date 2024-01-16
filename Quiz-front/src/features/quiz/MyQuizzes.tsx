@@ -39,7 +39,7 @@ export const MyQuizzes = () => {
     }, []);
     return(
         <div style={{width: '100%'}}>
-            <Title m={"auto"} size={75}>Moje quizy</Title>
+            <Title c={"emerald-green.7"} m={"auto"} size={75}>Moje quizy</Title>
             <SimpleGrid cols={{base:1, sm:2, lg:3}}>
                 {data.map((item)=> <MyQuizzesListItem key={item.id} item={item}/>)}
             </SimpleGrid>

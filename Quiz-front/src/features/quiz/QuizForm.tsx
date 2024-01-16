@@ -18,7 +18,6 @@ const QuizForm: React.FC = () => {
     const [category, setCategory] = useState<string[]>([])
     const [categories, setCategories] = useState<string[]>([])
     useEffect(() => {
-        console.log(categories)
         getCategories();
 
     },[]);
@@ -35,7 +34,6 @@ const QuizForm: React.FC = () => {
             credentials: 'include'
         });
 
-        console.log(form.values);
         navigate('/');
 
     };
@@ -104,7 +102,7 @@ const QuizForm: React.FC = () => {
     }
 
     const handleSelectCategory = (category:string[])=>{
-
+        console.log(category)
         setCategory(category);
 
         form.setFieldValue("category", category);
@@ -134,9 +132,7 @@ const QuizForm: React.FC = () => {
                                 value: value,
                             }
                         ))}
-                        value={category}
-                        defaultValue={['Brak']}
-                        //{...form.getInputProps("category")}
+
                         onChange={(value)=> value && handleSelectCategory(value)}
                         clearable
                     />

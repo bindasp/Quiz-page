@@ -20,9 +20,13 @@
 
 }
 .correct-answers{
+    margin-top: 10px;
+    text-align: center;
+    color: #31ad5c;
+    border: 1px solid #31ad5c;
     border-radius: 8px;
-    background-color: #ffec99;
-
+    padding: 5px;
+    font-size: 12px;
 }
 .AppShell{
     #background-color: #EEEEEE;
