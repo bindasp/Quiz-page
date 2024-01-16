@@ -3,6 +3,7 @@ import React, {FC, memo, useEffect} from "react";
 import {Card, Image, Text, Tooltip} from "@mantine/core";
 import "../styles/Forms.css";
 import {useLocation, useNavigate} from "react-router-dom";
+import {deleteQuizByAdmin} from "../../fetchFunctions/deleteFunctions";
 
 interface QuizListItemProps{
     item: QuizFormValues;
@@ -12,10 +13,6 @@ interface QuizListItemProps{
 export const QuizListItem: FC<QuizListItemProps> = memo(({item})=>{
     const location = useLocation();
     const params = location.pathname;
-
-    useEffect(() => {
-
-    }, []);
 
     const navigate = useNavigate();
     const handleOnClick = async() => {
@@ -37,16 +34,7 @@ export const QuizListItem: FC<QuizListItemProps> = memo(({item})=>{
     }
 
     const handleDelete = async(id:string)=>{
-        const quiz = await fetch(`http://localhost:3333/api/admin/quiz/${id}`, {
-            method: 'DELETE',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            credentials:'include'
-
-        });
-        console.log(id);
+        deleteQuizByAdmin(id).then();
     };
 
     return(

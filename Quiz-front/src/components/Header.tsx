@@ -5,32 +5,19 @@ import "../features/styles/Header.css";
 import {useIsLogged} from "../hooks/useIsLogged";
 import {QuizCategories} from "../types/QuizCategories";
 import {useIsAdmin} from "../hooks/useIsAdmin";
+import {logout} from "../fetchFunctions/postFunctions";
 
 export const Header = () =>{
     const isLogged = useIsLogged();
     const navigate = useNavigate();
     const isAdmin = useIsAdmin();
 
-    const handleLogout = async()=> {
+    const handleLogout = ()=> {
 
-        try {
-            const response = await fetch('http://localhost:3333/api/auth/signout', {
-                method: 'POST',
-                headers: {
-                    ContentType: 'application/json',
-                    Authorization: 'Basic ' + window.btoa(""),
-                },
-                credentials: 'include'
-            })
-
+        logout().then(()=>{
             navigate('/')
-            if (response.status !== 200) throw new Error("Logowanie się nie powiodło");
+        });
 
-        }
-
-        catch (e){
-            console.log(e);
-        }
     }
     const handleSelectCategory = async(category: string)=>{
         const searchParams = new URLSearchParams();

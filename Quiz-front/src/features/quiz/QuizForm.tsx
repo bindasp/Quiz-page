@@ -5,6 +5,8 @@ import {useQuizForm} from "./hooks/useQuizForm";
 import {IconCircle, IconX} from "@tabler/icons-react";
 import {useNavigate} from "react-router-dom";
 import "../styles/Forms.css"
+import {getCategories} from "../../fetchFunctions/getFunctions";
+import {postQuiz} from "../../fetchFunctions/postFunctions";
 
 interface categoryData{
     id:number,
@@ -18,43 +20,26 @@ const QuizForm: React.FC = () => {
     const [category, setCategory] = useState<string[]>([])
     const [categories, setCategories] = useState<string[]>([])
     useEffect(() => {
-        getCategories();
+        fetchCategories().then();
 
     },[]);
 
     const handleSubmit = async () => {
-
-        const response = await fetch(`http://localhost:3333/api/quiz`, {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(form.values),
-            credentials: 'include'
-        });
-
-        navigate('/');
+        postQuiz(form).then(()=>{navigate('/');})
 
     };
 
-    const getCategories = async ()=>{
-        const response = await fetch(`http://localhost:3333/api/category`,{
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-
-        })
-        if(response.ok){
-            const cat:categoryData[] = await response.json();
+    const fetchCategories = async ()=>{
+        try{
+            const cat:categoryData[] = await getCategories();
             const newCategories:string[] = [];
             cat.map(value => {
                 newCategories.push(value.categoryName);
             })
             setCategories(newCategories);
-
+        }
+        catch(error){
+            console.log("Błąd przy pobieraniu kategorii");
         }
     }
 

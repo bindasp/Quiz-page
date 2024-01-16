@@ -5,6 +5,8 @@ import {useQuizForm} from "./hooks/useQuizForm";
 import {IconCircle, IconX} from "@tabler/icons-react";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
 import "../styles/Forms.css"
+import {getAllQuizzes, getCategories, getQuizById} from "../../fetchFunctions/getFunctions";
+import {deleteQuiz} from "../../fetchFunctions/deleteFunctions";
 
 interface quizData{
     id?:string;
@@ -29,55 +31,40 @@ const EditQuiz: React.FC = () => {
     const location = useLocation();
     const quizItem = location.state?.quizItem;
     useEffect(()=> {
-        getCategories();
-        const fetchData = async () => {
-            const quiz = await fetch(`http://localhost:3333/api/quiz/${id}`, {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
 
-            });
-            if (quiz.ok) {
-                const data: quizData = await quiz.json();
-                form.setValues({
-                    title:quizItem.title,
-                    description:quizItem.description,
-                    category:data.category,
-                    questions:data.questions
-
-                })
-                console.log(quizItem)
-                setQuizData(data);
-
-            } else {
-                console.error('Błąd podczas pobierania quizu');
-            }
-        };
-
-        fetchData();
+        fetchCategories().then();
+        fetchData().then();
     },[]);
-
-    const getCategories = async ()=>{
-        const response = await fetch(`http://localhost:3333/api/category`,{
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-
-        })
-        if(response.ok){
-            const cat:categoryData[] = await response.json();
-            const newCategories:string[] = [];
-            cat.map(value => {
-                newCategories.push(value.categoryName);
+    const fetchData = async () => {
+        try {
+            const data: quizData = await getQuizById(id);
+            form.setValues({
+                title:quizItem.title,
+                description:quizItem.description,
+                category:data.category,
+                questions:data.questions
             })
-            setCategories(newCategories);
+            setQuizData(data);
+        }
 
+        catch(error){
+            console.error("Błąd przy pobieraniu quizów");
         }
     }
+    const fetchCategories = async ()=>{
+        try{
+                const cat:categoryData[] = await getCategories();
+                const newCategories:string[] = [];
+                cat.map(value => {
+                    newCategories.push(value.categoryName);
+                })
+                setCategories(newCategories);
+        }
+        catch(error){
+            console.log("Błąd przy pobieraniu kategorii");
+        }
+    }
+
     const handleSubmit = async () => {
         const response = await fetch(`http://localhost:3333/api/quiz/${id}`, {
             method: 'PATCH',
@@ -94,16 +81,16 @@ const EditQuiz: React.FC = () => {
     };
 
     const handleDelete = async() =>{
-        const response = await fetch(`http://localhost:3333/api/quiz/${id}`, {
-            method: 'DELETE',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            credentials: 'include'
-        });
-
-        console.log(response);
+        // const response = await fetch(`http://localhost:3333/api/quiz/${id}`, {
+        //     method: 'DELETE',
+        //     headers: {
+        //         'Accept': 'application/json',
+        //         'Content-Type': 'application/json',
+        //     },
+        //     credentials: 'include'
+        // });
+        //
+        deleteQuiz(id).then();
         navigate('/');
     }
 

@@ -1,6 +1,7 @@
 import {QuizListItem} from "./QuizListItem";
 import {SimpleGrid, Title} from "@mantine/core";
 import React, {useEffect, useState} from "react";
+import {getUserQuizzes} from "../../fetchFunctions/getFunctions";
 
 interface quizData{
     id?:string;
@@ -14,26 +15,18 @@ export const MyQuizzes = () => {
     const [data, setData] = useState<quizData[]>([])
 
     useEffect(() => {
-        const fetchData = async () => {
-            const response = await fetch(`http://localhost:3333/api/quiz`, {
-                method: 'GET',
-                headers:{
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
-                credentials:'include'
-            });
-            if(response.ok)
-            {
-                const quizData: quizData[] = await response.json();
-                setData(quizData);
 
-            }else{
-                console.error("Bład przy pobieraniu quizów")
-            }
-        }
-        fetchData();
+        fetchData().then();
     }, []);
+    const fetchData = async () => {
+        try{
+            const quizData: quizData[] = await getUserQuizzes();
+            setData(quizData);
+        }
+        catch(error){
+            console.log("Błąd przy pobieraniu quizów")
+        }
+    }
     return(
         <div style={{width: '100%'}}>
             <Title c={"emerald-green.7"} m={"auto"} size={75}>Moje quizy</Title>

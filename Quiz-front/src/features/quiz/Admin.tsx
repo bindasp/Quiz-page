@@ -3,6 +3,7 @@ import React, {useEffect, useState} from "react";
 import {IconList, IconMessageCircle, IconUsers} from "@tabler/icons-react";
 import {QuizListItem} from "./QuizListItem";
 import {UserItem} from "./UserItem";
+import {getAllQuizzes, getUsers} from "../../fetchFunctions/getFunctions";
 
 interface quizData{
     id?:string;
@@ -23,45 +24,28 @@ export const Admin = () => {
     const [data, setData] = useState<quizData[]>([])
     const [userData, setUserData] = useState<user[]>([])
     useEffect(() => {
-        const fetchUsers = async () => {
-            const response = await fetch(`http://localhost:3333/api/admin/user`, {
-                method: 'GET',
-                headers:{
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
-                credentials:'include'
-            });
-            if(response.ok)
-            {
-                const user: user[] = await response.json();
-                setUserData(user);
 
-            }else{
-                console.error("Bład przy pobieraniu użytkowników")
-            }
-        }
+       const fetchUsers = async () =>{
+           try{
+               const users:user[] = await getUsers();
+               setUserData(users);
+           }
+           catch (error){
+               console.error("Błąd przy pobieraniu użytkowników")
+           }
+       }
         const fetchData = async () => {
-            const response = await fetch(`http://localhost:3333/api/admin/quiz`, {
-                method: 'GET',
-                headers:{
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
-                credentials:'include'
-            });
-            if(response.ok)
-            {
-                const quizData: quizData[] = await response.json();
+            try {
+                const quizData: quizData[] = await getAllQuizzes();
                 setData(quizData);
-
-            }else{
-                console.error("Bład przy pobieraniu quizów")
+            }
+            catch(error){
+                console.error("Błąd przy pobieraniu quizów")
             }
         }
-        console.log()
-        fetchUsers();
-        fetchData();
+
+        fetchUsers().then();
+        fetchData().then();
     }, [userData]);
     return (
         <Tabs defaultValue="Użytkownicy">

@@ -10,5 +10,5 @@ export const login = async (login: string, password:string)=>{
         credentials: 'include'
     });
     if (response.status !== 201) throw new Error("Logowanie się nie powiodło");
-     //return await response.json();
+
 }

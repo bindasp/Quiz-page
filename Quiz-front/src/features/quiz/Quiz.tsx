@@ -3,13 +3,14 @@ import {useLocation, useParams} from "react-router-dom";
 import React, {useEffect, useState} from "react";
 import {QuizCategories} from "../../types/QuizCategories";
 import "../styles/Quiz.css";
+import {getQuizById} from "../../fetchFunctions/getFunctions";
 
 
 interface quizData{
     id?:string;
     title: string;
     description:string;
-    category: QuizCategories;
+    category: string[];
     questions: {question:string, answers:{answer:string, isCorrect: boolean}[]}[];
 }
 
@@ -32,43 +33,32 @@ const Quiz = ()=> {
     const quizItem = location.state?.quizItem;
     console.log(id);
     useEffect(() => {
-        const fetchData = async () => {
-            const quiz = await fetch(`http://localhost:3333/api/quiz/${id}`, {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
 
-            });
-            if (quiz.ok) {
-                const data: quizData = await quiz.json();
-                const shuffledData = data.questions.map((question) => ({
-                    ...question,
-                    answers: shuffleArray(question.answers),
-                }));
-
-                setQuizData({...data, questions: shuffledData});
-                initializeSelectedAnswers(data.questions);
-                initializeCorrectAnswers(shuffledData);
-
-            } else {
-                console.error('Błąd podczas pobierania quizu');
-            }
-        };
-
-        fetchData();
+        fetchData().then();
 
     }, [id]);
+    const fetchData = async () => {
+        const quiz = await getQuizById(id);
+        if (quiz) {
+            const data: quizData = quiz;
+            const shuffledData = data.questions.map((question) => ({
+                ...question,
+                answers: shuffleArray(question.answers),
+            }));
+            setQuizData({...data, questions: shuffledData});
+            initializeSelectedAnswers(data.questions);
+            initializeCorrectAnswers(shuffledData);
 
+        } else {
+            console.error('Błąd podczas pobierania quizu');
+        }
+    }
 
     const handleCheckboxChange = (questionIndex: number, answerIndex: number) => {
         setSelected((prevSelected) => {
             const newSelected = [...prevSelected];
 
             newSelected[questionIndex][answerIndex] = 1;
-
-            console.log(selected);
 
             return newSelected;
         });
@@ -87,9 +77,6 @@ const Quiz = ()=> {
                     newSelected[questionIndex][i]=0;
                 }
             }
-
-
-            console.log(selected);
 
             return newSelected;
         });
@@ -144,29 +131,22 @@ const Quiz = ()=> {
 
                 questionPoints += correctSelected/correctCount;
                 questionPoints -= incorrectSelected/incorrectCount;
-                console.log(correctCount);
-                console.log(incorrectCount);
                 if(questionPoints<0)
                     questionPoints=0;
                 totalPoints+=questionPoints;
             }
         }
-
         return totalPoints;
     };
 
 
     const handleSubmit = () => {
-
         if (selected && correctAnswers) {
             const newPoints = calculatePoints(selected, correctAnswers);
             setPoints(newPoints);
-
             setShowAnswers(true);
         }
-
     }
-
         return (
             <div>
                 <Stack>
@@ -197,7 +177,6 @@ const Quiz = ()=> {
                                         />
                                     </div>
                                 ))}
-
                             </div> :
                                 <div>
                                         <Radio.Group>
