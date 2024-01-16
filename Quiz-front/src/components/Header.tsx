@@ -79,7 +79,7 @@ export const Header = () =>{
                 <Button onClick={()=>{navigate('./quiz/new')}}  size={"lg"}  className={"Button"}>Dodaj quiz</Button>
             </div> :
                 <div className={"Buttons"}>
-                    <Button onClick={()=>{navigate('./quiz/new')}}  size={"lg"}  className={"Button"}>Dodaj quiz</Button>`
+                    <Button onClick={()=>{navigate('./quiz/new')}}  size={"lg"}  className={"Button"}>Dodaj quiz</Button>
                 <Menu shadow={"md"}>
                     <Menu.Target>
                         <Button size={"lg"}>Konto</Button>

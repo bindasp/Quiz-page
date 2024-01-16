@@ -1,8 +1,8 @@
 import {QuizFormValues} from "../../types/QuizFormValues";
-import React, {FC, memo, useEffect, useState} from "react";
+import React, {FC, memo, useEffect} from "react";
 import {Card, Image, Text, Tooltip} from "@mantine/core";
 import "../styles/Forms.css";
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 
 interface QuizListItemProps{
     item: QuizFormValues;
@@ -10,33 +10,44 @@ interface QuizListItemProps{
 }
 
 export const QuizListItem: FC<QuizListItemProps> = memo(({item})=>{
-    const [randomImageUrl, setRandomImageUrl] = useState<string | null>(null);
+    const location = useLocation();
+    const params = location.pathname;
+
     useEffect(() => {
-        const fetchRandomImage = async () => {
-            try {
-                const response = await fetch(
-                    "https://source.unsplash.com/random/400x200"
-                );
 
-                if (response.ok) {
-                    setRandomImageUrl(response.url);
-                } else {
-                    throw new Error("Failed to fetch random image");
-                }
-            } catch (error) {
-                console.error(error);
-            }
-        };
-
-        fetchRandomImage();
     }, []);
+
     const navigate = useNavigate();
     const handleOnClick = async() => {
-        if(item.id !== undefined)
-            navigate(`/quiz/${item.id}`, {state:{quizItem: item}})
+        if(params==='/quizzes')
+        {
+            if(item.id !== undefined)
+                navigate(`/quiz/${item.id}/edit`, {state:{quizItem: item}})
+        }
+        else if(params===`/admin`)
+        {
+            if(item.id !== undefined)
+                await handleDelete(item.id);
+        }
+        else {
+            if(item.id !== undefined)
+                navigate(`/quiz/${item.id}`, {state:{quizItem: item}})
+        }
 
     }
 
+    const handleDelete = async(id:string)=>{
+        const quiz = await fetch(`http://localhost:3333/api/admin/quiz/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            credentials:'include'
+
+        });
+        console.log(id);
+    };
 
     return(
         <Tooltip
@@ -49,8 +60,7 @@ export const QuizListItem: FC<QuizListItemProps> = memo(({item})=>{
         >
             <Card.Section>
                 <Image
-                   // src={"https://placehold.co/400x200"}
-                    src={randomImageUrl}
+                    src={"https://placehold.co/400x200/404040/DDD"}
                     h={300}
                     alt={"alt"}
                 />

@@ -30,6 +30,7 @@ const Quiz = ()=> {
     const [correctAnswers, setCorrectAnswers] = useState<number[][]>([])
     const location = useLocation();
     const quizItem = location.state?.quizItem;
+    console.log(id);
     useEffect(() => {
         const fetchData = async () => {
             const quiz = await fetch(`http://localhost:3333/api/quiz/${id}`, {

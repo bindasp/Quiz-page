@@ -1,9 +1,6 @@
-import {QuizFormValues} from "../../types/QuizFormValues";
 import {QuizListItem} from "./QuizListItem";
 import {SimpleGrid, Title} from "@mantine/core";
 import React, {useEffect, useState} from "react";
-import {QuizCategories} from "../../types/QuizCategories";
-import {MyQuizzesListItem} from "./MyQuizzesListItem";
 
 interface quizData{
     id?:string;
@@ -41,7 +38,7 @@ export const MyQuizzes = () => {
         <div style={{width: '100%'}}>
             <Title c={"emerald-green.7"} m={"auto"} size={75}>Moje quizy</Title>
             <SimpleGrid cols={{base:1, sm:2, lg:3}}>
-                {data.map((item)=> <MyQuizzesListItem key={item.id} item={item}/>)}
+                {data.map((item)=> <QuizListItem key={item.id} item={item}/>)}
             </SimpleGrid>
         </div>
     );

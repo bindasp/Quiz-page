@@ -15,7 +15,7 @@ interface quizData{
 
 export const QuizList = () => {
 const [data, setData] = useState<quizData[]>([])
-const {category} = useParams()
+const {category} = useParams();
     useEffect(() => {
         const fetchData = async () => {
 
@@ -46,7 +46,7 @@ const {category} = useParams()
   return(
       <div style={{width: '100%'}}>
         <SimpleGrid cols={{base:1, sm:2, lg:3}}>
-            {data.map((item)=> <QuizListItem   key={item.id} item={item}/>)}
+            {data.map((item)=> <QuizListItem key={item.id} item={item}/>)}
         </SimpleGrid>
       </div>
   );
