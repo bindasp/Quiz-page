@@ -254,13 +254,70 @@ export class QuizService {
   }
 
   async deleteQuiz(userId: number, id: string) {
-    await this.prismaMysqlService.quizMySQL.deleteMany({
+    /*await this.prismaMysqlService.quizMySQL.deleteMany({
       where: { mongoId: id },
     });
-    await this.prismaMongoService.quizMongo.delete({ where: { id: id } });
+    await this.prismaMongoService.quizMongo.delete({ where: { id: id } });*/
+    const mysqlId = await this.prismaMysqlService.quizMySQL
+      .findUnique({
+        where: { mongoId: id },
+        select: { id: true },
+      })
+      .then((r) => r?.id);
+
+    await this.prismaMysqlService.quizCategory.deleteMany({
+      where: { quizId: mysqlId },
+    });
+
+    await this.prismaMysqlService.quizMySQL.delete({
+      where: { mongoId: id },
+    });
+
+    await this.prismaMongoService.quizMongo.delete({
+      where: { id: id },
+    });
   }
 
   async updateQuiz(id: string, quiz: QuizMongo) {
+    const categoryNames = quiz.category.map((c) => c.toString());
+    delete quiz.category;
+    const categories = await this.prismaMysqlService.category.findMany({
+      where: {
+        categoryName: {
+          in: categoryNames,
+        },
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    const categoryIdsToAssign = categories.map((category) => category.id);
+
+    const quizMySQLId = await this.prismaMysqlService.quizMySQL
+      .findUnique({
+        where: { mongoId: id },
+        select: { id: true },
+      })
+      .then((id) => id.id);
+
+    // Usuń wszystkie istniejące kategorie dla tego quizu
+    await this.prismaMysqlService.quizCategory.deleteMany({
+      where: {
+        quizId: quizMySQLId, // Tu podaj odpowiednie ID quizu
+      },
+    });
+
+    // Dodaj nowe kategorie
+    for (const categoryId of categoryIdsToAssign) {
+      await this.prismaMysqlService.quizCategory.create({
+        data: {
+          quizId: quizMySQLId, // Tu podaj odpowiednie ID quizu
+          categoryId: categoryId,
+        },
+      });
+    }
+
     return await this.prismaMongoService.quizMongo.update({
       where: { id: id },
       data: quiz,
