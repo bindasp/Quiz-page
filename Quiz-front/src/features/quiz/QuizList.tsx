@@ -17,6 +17,7 @@ interface quizData{
 export const QuizList = () => {
 const [data, setData] = useState<quizData[]>([])
 const {category} = useParams();
+
     useEffect(() => {
         fetchData().then();
     }, [window.location.search, setData]);

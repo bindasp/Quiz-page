@@ -1,5 +1,5 @@
 import {QuizFormValues} from "../../types/QuizFormValues";
-import React, {FC, memo, useEffect} from "react";
+import React, {FC, memo} from "react";
 import {Card, Image, Text, Tooltip} from "@mantine/core";
 import "../styles/Forms.css";
 import {useLocation, useNavigate} from "react-router-dom";
