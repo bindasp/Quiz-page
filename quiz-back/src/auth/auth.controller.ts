@@ -46,6 +46,7 @@ export class AuthController {
   signout(@Res({ passthrough: true }) res: Response) {
     res.clearCookie('access-token');
     res.clearCookie('is-logged');
+    res.clearCookie('is-admin');
   }
 
   @Get('/me')
