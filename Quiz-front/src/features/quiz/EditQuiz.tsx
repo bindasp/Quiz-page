@@ -1,11 +1,11 @@
 import React, {useEffect, useState} from "react";
-import {Button, Checkbox, Paper, Stack, Textarea, TextInput,MultiSelect} from "@mantine/core";
+import {Button, Checkbox, MultiSelect, Paper, Stack, Textarea, TextInput} from "@mantine/core";
 
 import {useQuizForm} from "./hooks/useQuizForm";
-import {IconCircle, IconX} from "@tabler/icons-react";
+import {IconX} from "@tabler/icons-react";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
 import "../styles/Forms.css"
-import {getAllQuizzes, getCategories, getQuizById} from "../../fetchFunctions/getFunctions";
+import {getCategories, getQuizById} from "../../fetchFunctions/getFunctions";
 import {deleteQuiz} from "../../fetchFunctions/deleteFunctions";
 
 interface quizData{
@@ -41,7 +41,7 @@ const EditQuiz: React.FC = () => {
             form.setValues({
                 title:quizItem.title,
                 description:quizItem.description,
-                category:data.category,
+                category:quizItem.category,
                 questions:data.questions
             })
             setQuizData(data);
@@ -81,15 +81,7 @@ const EditQuiz: React.FC = () => {
     };
 
     const handleDelete = async() =>{
-        // const response = await fetch(`http://localhost:3333/api/quiz/${id}`, {
-        //     method: 'DELETE',
-        //     headers: {
-        //         'Accept': 'application/json',
-        //         'Content-Type': 'application/json',
-        //     },
-        //     credentials: 'include'
-        // });
-        //
+
         deleteQuiz(id).then();
         navigate('/');
     }
