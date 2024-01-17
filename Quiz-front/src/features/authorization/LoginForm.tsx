@@ -20,7 +20,7 @@ const LoginForm: React.FC = () => {
             password:''
         },
         validate:{
-            password: hasLength({min:4, max: 16}, ("Hasło musi mieć długość od 8 do 16 znaków")),
+            password: hasLength({min:4, max: 16}, ("Hasło musi mieć długość od 4 do 16 znaków")),
             login: hasLength({min:3, max:16}, ("Login musi mieć długość od 3 do 16 znaków"))
         }
     });

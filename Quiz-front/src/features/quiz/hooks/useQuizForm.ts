@@ -1,6 +1,5 @@
 import {useForm} from "@mantine/form";
 import {QuizFormValues} from "../../../types/QuizFormValues";
-import {QuizCategories} from "../../../types/QuizCategories";
 
 export const useQuizForm = () => {
     const form = useForm<QuizFormValues>({

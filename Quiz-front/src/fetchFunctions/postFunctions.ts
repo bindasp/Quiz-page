@@ -1,10 +1,11 @@
 import {QuizFormValues} from "../types/QuizFormValues";
 import {UseFormReturnType} from "@mantine/form/lib";
+import {API_URL} from "../config";
 
 export const logout = async()=> {
 
     try {
-        const response = await fetch('http://localhost:3333/api/auth/signout', {
+        const response = await fetch(`${API_URL}/auth/signout`, {
             method: 'POST',
             headers: {
                 ContentType: 'application/json',
@@ -23,7 +24,7 @@ export const logout = async()=> {
 }
 
 export const postQuiz = async (form: UseFormReturnType<QuizFormValues>)=> {
-    const response = fetch(`http://localhost:3333/api/quiz`, {
+    const response = fetch(`${API_URL}/quiz`, {
         method: 'POST',
         headers: {
             'Accept': 'application/json',

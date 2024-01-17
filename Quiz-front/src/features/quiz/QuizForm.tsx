@@ -1,8 +1,7 @@
 import React, {useEffect, useState} from "react";
-import {Button, Checkbox, MultiSelect, Paper, rem, Stack, Textarea, TextInput} from "@mantine/core";
-
+import {Button, Checkbox, MultiSelect, Paper, Stack, Textarea, TextInput} from "@mantine/core";
 import {useQuizForm} from "./hooks/useQuizForm";
-import {IconCircle, IconX} from "@tabler/icons-react";
+import {IconX} from "@tabler/icons-react";
 import {useNavigate} from "react-router-dom";
 import "../styles/Forms.css"
 import {getCategories} from "../../fetchFunctions/getFunctions";
@@ -20,13 +19,18 @@ const QuizForm: React.FC = () => {
     const [category, setCategory] = useState<string[]>([])
     const [categories, setCategories] = useState<string[]>([])
     useEffect(() => {
-        fetchCategories().then();
 
+        fetchCategories().then();
     },[]);
 
     const handleSubmit = async () => {
-        postQuiz(form).then(()=>{navigate('/');})
-
+        try{
+            await postQuiz(form);
+            navigate('/')
+        }
+        catch(error){
+            console.log("Bład poczas wysyłania quizu")
+        }
     };
 
     const fetchCategories = async ()=>{
@@ -87,7 +91,7 @@ const QuizForm: React.FC = () => {
     }
 
     const handleSelectCategory = (category:string[])=>{
-        console.log(category)
+
         setCategory(category);
 
         form.setFieldValue("category", category);

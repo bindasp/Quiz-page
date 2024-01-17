@@ -1,5 +1,7 @@
+import {API_URL} from "../config";
+
 export const deleteQuiz= async(id:string|undefined) =>{
-    const response = await fetch(`http://localhost:3333/api/quiz/${id}`, {
+    const response = await fetch(`${API_URL}/quiz/${id}`, {
         method: 'DELETE',
         headers: {
             'Accept': 'application/json',
@@ -11,7 +13,7 @@ export const deleteQuiz= async(id:string|undefined) =>{
 }
 
 export const deleteQuizByAdmin = async(id:string)=>{
-    const quiz = await fetch(`http://localhost:3333/api/admin/quiz/${id}`, {
+    const quiz = await fetch(`${API_URL}/admin/quiz/${id}`, {
         method: 'DELETE',
         headers: {
             'Accept': 'application/json',
@@ -24,7 +26,7 @@ export const deleteQuizByAdmin = async(id:string)=>{
 };
 
 export const deleteUser = async(id:number)=>{
-    const quiz = await fetch(`http://localhost:3333/api/admin/user/${id}`, {
+    const quiz = await fetch(`${API_URL}/admin/user/${id}`, {
         method: 'DELETE',
         headers: {
             'Accept': 'application/json',

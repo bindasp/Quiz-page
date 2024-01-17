@@ -1,7 +1,6 @@
-import {Button, Checkbox, Group, Paper, Radio, Stack, Text, Title} from "@mantine/core";
+import {Button, Checkbox, Paper, Radio, Stack, Text, Title} from "@mantine/core";
 import {useLocation, useParams} from "react-router-dom";
 import React, {useEffect, useState} from "react";
-import {QuizCategories} from "../../types/QuizCategories";
 import "../styles/Quiz.css";
 import {getQuizById} from "../../fetchFunctions/getFunctions";
 

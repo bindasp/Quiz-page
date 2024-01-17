@@ -3,15 +3,27 @@ import {Button, Menu} from "@mantine/core";
 import {useNavigate} from "react-router-dom";
 import "../features/styles/Header.css";
 import {useIsLogged} from "../hooks/useIsLogged";
-import {QuizCategories} from "../types/QuizCategories";
+
 import {useIsAdmin} from "../hooks/useIsAdmin";
 import {logout} from "../fetchFunctions/postFunctions";
+import {getCategories} from "../fetchFunctions/getFunctions";
+import {useEffect, useState} from "react";
+
+interface categoryData{
+    id:number,
+    categoryName: string
+}
 
 export const Header = () =>{
     const isLogged = useIsLogged();
     const navigate = useNavigate();
     const isAdmin = useIsAdmin();
+    const [category, setCategory] = useState<string[]>([])
+    const [categories, setCategories] = useState<string[]>([])
+    useEffect(() => {
+        fetchCategories().then();
 
+    },[]);
     const handleLogout = ()=> {
 
         logout().then(()=>{
@@ -20,12 +32,24 @@ export const Header = () =>{
 
     }
     const handleSelectCategory = async(category: string)=>{
-        const searchParams = new URLSearchParams();
 
-        searchParams.append('category', category);
-        navigate(`/?${searchParams.toString()}`);
+       navigate(`/?category=${category}`);
 
     }
+    const fetchCategories = async ()=>{
+        try{
+            const cat:categoryData[] = await getCategories();
+            const newCategories:string[] = [];
+            cat.map(value => {
+                newCategories.push(value.categoryName);
+            })
+            setCategories(newCategories);
+        }
+        catch(error){
+            console.log("Błąd przy pobieraniu kategorii");
+        }
+    }
+
     return(
         <div className={"Header"}>
             <div className={"Logo"}>
@@ -43,7 +67,6 @@ export const Header = () =>{
                     <Menu.Target>
                         <Button
                             size={"lg"}
-                            //bg={'blue'}
 
                             style={{marginLeft:'30px', width:'200px', height:"50px", marginTop:'25px'}}
                             fw={800}
@@ -52,7 +75,7 @@ export const Header = () =>{
                     </Menu.Target>
 
                     <Menu.Dropdown>
-                        {Object.values(QuizCategories).map((category)=>(
+                        {categories.map((category)=>(
                             <Menu.Item key={category} onClick={()=>handleSelectCategory(category)}>{category}</Menu.Item>
                         ))}
                     </Menu.Dropdown>
