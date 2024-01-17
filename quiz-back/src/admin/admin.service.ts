@@ -31,14 +31,12 @@ export class AdminService {
       });
     }
 
-    // Usuń każdy quiz w bazie MongoDB
     for (const quizId of mongoIds) {
       await this.prismaMongoService.quizMongo.delete({
         where: { id: quizId },
       });
     }
 
-    // Usuń użytkownika
     await this.prismaMysqlService.user.delete({
       where: { id: id },
     });

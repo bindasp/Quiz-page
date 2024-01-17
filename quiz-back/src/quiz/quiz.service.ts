@@ -48,23 +48,6 @@ export class QuizService {
         },
       },
     });
-
-    /*const savedQuiz = await this.prismaMongoService.quiz.create({
-      data: quiz,
-      select: {
-        id: true,
-        title: true,
-        description: true,
-        category: true,
-      },
-    });
-    const createdQuiz = await this.prismaMysqlService.quiz.create({
-      data: {
-        mongoId: savedQuiz.id,
-        userId: userId,
-      },
-    });
-    return savedQuiz;*/
   }
 
   async getQuizById(id: string) {
@@ -76,55 +59,11 @@ export class QuizService {
         questions: true,
       },
     });
-    /*const quizMySQL = await this.prismaMysqlService.quizMySQL.findUnique({
-      where: { mongoId: id },
-      select: {
-        categories: {
-          select: {
-            category: true,
-          },
-        },
-      },
-    });
-    quizMongo.category = quizMySQL.categories.map(
-      (c) => c.category.categoryName,
-    );*/
 
     return quizMongo;
   }
 
   async getRandomQuiz(amount: number, category: string) {
-    /*const quizMongo = await this.prismaMongoService.quizMongo.findMany({
-      take: amount,
-      select: {
-        id: true,
-        title: true,
-        description: true,
-        category: true,
-      },
-    });
-    const quizMySQL = await this.prismaMysqlService.quizMySQL.findMany({
-      where: { mongoId: { in: quizMongo.map((q) => q.id) } },
-      select: {
-        mongoId: true,
-        categories: {
-          select: {
-            category: true,
-          },
-        },
-      },
-    });
-    quizMongo.forEach((q) => {
-      const matchingQuizMySQL = quizMySQL.find((qm) => qm.mongoId === q.id);
-
-      if (matchingQuizMySQL) {
-        q.category = matchingQuizMySQL.categories.map(
-          (c) => c.category.categoryName,
-        );
-      }
-    });
-
-    return quizMongo;*/
     const quizMySQL = await this.prismaMysqlService.quizMySQL.findMany({
       take: amount,
       where: {
@@ -210,54 +149,9 @@ export class QuizService {
     });
 
     return quizMongo;
-    /*const quizzes = await this.prismaMysqlService.user.findUnique({
-      where: {
-        id: userId,
-      },
-      select: {
-        quizzes: {
-          select: {
-            mongoId: true,
-          },
-        },
-      },
-    });
-    const quizIds = quizzes.quizzes.map((quiz) => quiz.mongoId);
-    //console.log(quizIds);
-    const quizMongo = await this.prismaMongoService.quizMongo.findMany({
-      where: { id: { in: quizIds } },
-      select: { id: true, title: true, description: true, category: true },
-    });
-
-    const quizMySQL = await this.prismaMysqlService.quizMySQL.findMany({
-      where: { mongoId: { in: quizMongo.map((q) => q.id) } },
-      select: {
-        mongoId: true,
-        categories: {
-          select: {
-            category: true,
-          },
-        },
-      },
-    });
-    quizMongo.forEach((q) => {
-      const matchingQuizMySQL = quizMySQL.find((qm) => qm.mongoId === q.id);
-
-      if (matchingQuizMySQL) {
-        q.category = matchingQuizMySQL.categories.map(
-          (c) => c.category.categoryName,
-        );
-      }
-    });
-
-    return quizMongo;*/
   }
 
   async deleteQuiz(userId: number, id: string) {
-    /*await this.prismaMysqlService.quizMySQL.deleteMany({
-      where: { mongoId: id },
-    });
-    await this.prismaMongoService.quizMongo.delete({ where: { id: id } });*/
     const mysqlId = await this.prismaMysqlService.quizMySQL
       .findUnique({
         where: { mongoId: id },
@@ -301,18 +195,16 @@ export class QuizService {
       })
       .then((id) => id.id);
 
-    // Usuń wszystkie istniejące kategorie dla tego quizu
     await this.prismaMysqlService.quizCategory.deleteMany({
       where: {
-        quizId: quizMySQLId, // Tu podaj odpowiednie ID quizu
+        quizId: quizMySQLId,
       },
     });
 
-    // Dodaj nowe kategorie
     for (const categoryId of categoryIdsToAssign) {
       await this.prismaMysqlService.quizCategory.create({
         data: {
-          quizId: quizMySQLId, // Tu podaj odpowiednie ID quizu
+          quizId: quizMySQLId,
           categoryId: categoryId,
         },
       });

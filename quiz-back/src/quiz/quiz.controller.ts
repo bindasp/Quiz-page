@@ -31,7 +31,7 @@ export class QuizController {
     return this.quizService.getRandomQuiz(parseInt(amount), category);
   }
   @Get('/:id')
-  hello(@Param('id') id: string) {
+  getQuizById(@Param('id') id: string) {
     return this.quizService.getQuizById(id);
   }
 
