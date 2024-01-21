@@ -45,7 +45,7 @@ const LoginForm: React.FC = () => {
                     <Paper  shadow="xs" style={{maxWidth:"1000px", marginBottom:"20px" ,margin:"auto",padding: "16px" }}>
                         <TextInput
                             required
-                            type={"login"}
+
                             label={`Login`}
                             placeholder="Podaj login"
                             {...form.getInputProps('login')}
