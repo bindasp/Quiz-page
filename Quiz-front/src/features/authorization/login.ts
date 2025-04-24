@@ -1,14 +1,14 @@
-import {API_URL} from "../../config";
+import { API_URL } from "../../config";
 
-export const login = async (login: string, password:string)=>{
-    const response = await fetch(`${API_URL}/auth/signin`, {
+export const login = async (login: string, password: string) => {
+    const response = await fetch(`${API_URL}/login`, {
         method: 'POST',
         headers: {
-            ContentType: 'application/json',
-            Authorization: 'Basic ' + window.btoa(login + ":" + password),
+            'Content-Type': 'application/json',
         },
+        body: JSON.stringify({ login, password }),
         credentials: 'include'
     });
-    if (response.status !== 201) throw new Error("Logowanie się nie powiodło");
+    if (response.status !== 200) throw new Error("Logowanie się nie powiodło");
 
 }

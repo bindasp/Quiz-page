@@ -1,14 +1,14 @@
-import {API_URL} from "../../config";
+import { API_URL } from "../../config";
 
 type RegisterFormType = {
-    login:string;
-    email:string;
-    password:string;
-    confirmpassword:string;
+    login: string;
+    email: string;
+    password: string;
+    confirmpassword: string;
 }
-export const register = async (data:RegisterFormType)=>{
+export const register = async (data: RegisterFormType) => {
 
-    const response = await fetch(`${API_URL}/auth/signup`, {
+    const response = await fetch(`${API_URL}/register`, {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
