@@ -1,9 +1,15 @@
+interface categoryData {
+    id: number,
+    name: string,
+    description: string
+}
+
 export type QuizFormValues = {
-    id?:string;
+    id?: string;
     title: string;
-    description:string;
+    description: string;
     category: string[];
-    questions: {question:string, answers:{answer:string, isCorrect: boolean}[]}[];
+    questions: { question: string, answers: { answer: string, isCorrect: boolean }[] }[];
 
 }
 

@@ -4,11 +4,17 @@ import React, { useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { getQuizzes } from "../../fetchFunctions/getFunctions";
 
+interface categoryData {
+    id: number,
+    name: string,
+    description: string
+}
+
 interface quizData {
     id?: string;
     title: string;
     description: string;
-    category: string[];
+    category: categoryData[];
     questions: { question: string, answers: [{ answer: string, isCorrect: boolean }] }[];
 }
 

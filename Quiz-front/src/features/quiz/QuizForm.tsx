@@ -16,7 +16,6 @@ interface categoryData {
 const QuizForm: React.FC = () => {
     const form = useQuizForm();
     const navigate = useNavigate();
-    const [updatedQuestions, setUpdatedQuestions] = useState<any[]>([]);
     const [category, setCategory] = useState<string[]>([])
     const [categories, setCategories] = useState<string[]>([])
     useEffect(() => {

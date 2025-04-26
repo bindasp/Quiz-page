@@ -7,7 +7,7 @@ interface quizData {
     id?: string;
     title: string;
     description: string;
-    category: string[];
+    category: categoryData[];
     questions: { question: string, answers: [{ answer: string, isCorrect: boolean }] }[];
 }
 interface categoryData {
@@ -63,7 +63,7 @@ export const getCategories = async (): Promise<categoryData[]> => {
     return await response.json();
 }
 export const getUserQuizzes = async (): Promise<quizData[]> => {
-    const response = await fetch(`http://localhost:3333/api/quiz`, {
+    const response = await fetch(`http://localhost:5000/quiz`, {
         method: 'GET',
         headers: {
             'Accept': 'application/json',

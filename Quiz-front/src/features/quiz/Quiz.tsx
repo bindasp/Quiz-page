@@ -1,16 +1,21 @@
-import {Button, Checkbox, Paper, Radio, Stack, Text, Title} from "@mantine/core";
-import {useLocation, useParams} from "react-router-dom";
-import React, {useEffect, useState} from "react";
+import { Button, Checkbox, Paper, Radio, Stack, Text, Title } from "@mantine/core";
+import { useLocation, useParams } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 import "../styles/Quiz.css";
-import {getQuizById} from "../../fetchFunctions/getFunctions";
+import { getQuizById } from "../../fetchFunctions/getFunctions";
 
+interface categoryData {
+    id: number,
+    name: string,
+    description: string
+}
 
-interface quizData{
-    id?:string;
+interface quizData {
+    id?: string;
     title: string;
-    description:string;
-    category: string[];
-    questions: {question:string, answers:{answer:string, isCorrect: boolean}[]}[];
+    description: string;
+    category: categoryData[];
+    questions: { question: string, answers: { answer: string, isCorrect: boolean }[] }[];
 }
 
 const shuffleArray = (array: { answer: string; isCorrect: boolean }[]): { answer: string; isCorrect: boolean }[] => {
@@ -21,8 +26,8 @@ const shuffleArray = (array: { answer: string; isCorrect: boolean }[]): { answer
     }
     return shuffledArray;
 };
-const Quiz = ()=> {
-    const {id} = useParams();
+const Quiz = () => {
+    const { id } = useParams();
     const [quizData, setQuizData] = useState<quizData | null>(null);
     const [showAnswers, setShowAnswers] = useState<boolean>(false);
     const [points, setPoints] = useState<number>(0);
@@ -44,7 +49,7 @@ const Quiz = ()=> {
                 ...question,
                 answers: shuffleArray(question.answers),
             }));
-            setQuizData({...data, questions: shuffledData});
+            setQuizData({ ...data, questions: shuffledData });
             initializeSelectedAnswers(data.questions);
             initializeCorrectAnswers(shuffledData);
 
@@ -66,14 +71,12 @@ const Quiz = ()=> {
     const handleRadioChange = (questionIndex: number, answerIndex: number) => {
         setSelected((prevSelected) => {
             const newSelected = [...prevSelected];
-            for(let i=0; i<newSelected[questionIndex].length;  i++)
-            {
-                if(i == answerIndex)
-                {
+            for (let i = 0; i < newSelected[questionIndex].length; i++) {
+                if (i == answerIndex) {
                     newSelected[questionIndex][answerIndex] = 1;
                 }
-                else{
-                    newSelected[questionIndex][i]=0;
+                else {
+                    newSelected[questionIndex][i] = 0;
                 }
             }
 
@@ -112,27 +115,25 @@ const Quiz = ()=> {
 
         if (userAnswers && correctAnswers) {
             for (let i = 0; i < userAnswers.length; i++) {
-                let questionPoints =0;
+                let questionPoints = 0;
                 let correctCount = correctAnswers[i].reduce((acc, current) => acc + current, 0);
                 let incorrectCount = correctAnswers[i].length - correctCount;
-                let correctSelected =0;
-                let incorrectSelected =0;
-                for(let j=0; j<userAnswers[i].length; j++){
-                    if(userAnswers[i][j]==correctAnswers[i][j] && correctAnswers[i][j] == 1)
-                    {
+                let correctSelected = 0;
+                let incorrectSelected = 0;
+                for (let j = 0; j < userAnswers[i].length; j++) {
+                    if (userAnswers[i][j] == correctAnswers[i][j] && correctAnswers[i][j] == 1) {
                         correctSelected++;
                     }
-                    if(userAnswers[i][j]!=correctAnswers[i][j] && userAnswers[i][j] == 1)
-                    {
+                    if (userAnswers[i][j] != correctAnswers[i][j] && userAnswers[i][j] == 1) {
                         incorrectSelected++;
                     }
                 }
 
-                questionPoints += correctSelected/correctCount;
-                questionPoints -= incorrectSelected/incorrectCount;
-                if(questionPoints<0)
-                    questionPoints=0;
-                totalPoints+=questionPoints;
+                questionPoints += correctSelected / correctCount;
+                questionPoints -= incorrectSelected / incorrectCount;
+                if (questionPoints < 0)
+                    questionPoints = 0;
+                totalPoints += questionPoints;
             }
         }
         return totalPoints;
@@ -146,28 +147,28 @@ const Quiz = ()=> {
             setShowAnswers(true);
         }
     }
-        return (
-            <div>
-                <Stack>
-                    <Title m={"auto"}>
-                        {quizItem.title}
-                    </Title>
-                    <Text display={!showAnswers ? "none" : ""} ta={"center"}>Twój wynik
-                        to: {points}/{quizData?.questions.length}</Text>
-                    {quizData?.questions.map((item, questionIndex) => (
+    return (
+        <div>
+            <Stack>
+                <Title m={"auto"}>
+                    {quizItem.title}
+                </Title>
+                <Text display={!showAnswers ? "none" : ""} ta={"center"}>Twój wynik
+                    to: {points}/{quizData?.questions.length}</Text>
+                {quizData?.questions.map((item, questionIndex) => (
 
-                        <Paper
-                            withBorder={true}
-                            shadow="xs"
-                            style={{width: "60%", marginBottom: "20px", margin: "auto", padding: "16px"}}
-                            key={item.question}
-                        >
-                            <p>{item.question}</p>
-                            {correctAnswers[questionIndex].reduce((acc, current) => acc + current, 0)>1 ?
+                    <Paper
+                        withBorder={true}
+                        shadow="xs"
+                        style={{ width: "60%", marginBottom: "20px", margin: "auto", padding: "16px" }}
+                        key={item.question}
+                    >
+                        <p>{item.question}</p>
+                        {correctAnswers[questionIndex].reduce((acc, current) => acc + current, 0) > 1 ?
                             <div>
                                 {item.answers.map((answer, index) => (
                                     <div>
-                                            <Checkbox
+                                        <Checkbox
                                             label={answer.answer}
                                             className={showAnswers ? (answer.isCorrect) ? "correct" : "incorrect" : ""}
                                             color={showAnswers ? (answer.isCorrect) ? "lime" : "red" : ""}
@@ -177,38 +178,38 @@ const Quiz = ()=> {
                                     </div>
                                 ))}
                             </div> :
-                                <div>
-                                        <Radio.Group>
-                                        <Stack>
-                                            {item.answers.map((answer, index) => (
-                                                <Radio value={answer.answer} label={answer.answer}
-                                                onChange={()=>handleRadioChange(questionIndex, index)}
-                                                       color={showAnswers ? (answer.isCorrect) ? "lime" : "red" : ""}
-                                                />
+                            <div>
+                                <Radio.Group>
+                                    <Stack>
+                                        {item.answers.map((answer, index) => (
+                                            <Radio value={answer.answer} label={answer.answer}
+                                                onChange={() => handleRadioChange(questionIndex, index)}
+                                                color={showAnswers ? (answer.isCorrect) ? "lime" : "red" : ""}
+                                            />
 
-                                                ))}
-                                        </Stack>
-                                        </Radio.Group>
+                                        ))}
+                                    </Stack>
+                                </Radio.Group>
 
-                                </div>
+                            </div>
 
-                            }
-                            {showAnswers ?
-                                <div className={"correct-answers"}>
-                                    Poprawne odpowiedzi: {item.answers.filter(answer => answer.isCorrect).map(answer => answer.answer).join(", ")}
-                                </div>
-                                : <div></div>
+                        }
+                        {showAnswers ?
+                            <div className={"correct-answers"}>
+                                Poprawne odpowiedzi: {item.answers.filter(answer => answer.isCorrect).map(answer => answer.answer).join(", ")}
+                            </div>
+                            : <div></div>
 
 
-                    }
+                        }
 
-                        </Paper>
-                    ))}
+                    </Paper>
+                ))}
 
-                    <Button display={showAnswers ? "none" : ""} style={{width: "60%", margin: "auto"}}
-                            onClick={handleSubmit}>Zatwierdź odpowiedzi</Button>
-                </Stack>
-            </div>
-        )
-    }
+                <Button display={showAnswers ? "none" : ""} style={{ width: "60%", margin: "auto" }}
+                    onClick={handleSubmit}>Zatwierdź odpowiedzi</Button>
+            </Stack>
+        </div>
+    )
+}
 export default Quiz;

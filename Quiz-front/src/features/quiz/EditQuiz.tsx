@@ -8,24 +8,28 @@ import "../styles/Forms.css"
 import { getCategories, getQuizById } from "../../fetchFunctions/getFunctions";
 import { deleteQuiz } from "../../fetchFunctions/deleteFunctions";
 
-interface quizData {
+interface QuizApi {
     id?: string;
     title: string;
     description: string;
-    category: string[];
-    questions: { question: string, answers: [{ answer: string, isCorrect: boolean }] }[];
+    category: categoryData[];
+    questions: {
+        question: string;
+        answers: { answer: string, isCorrect: boolean }[];
+    }[];
 }
 interface categoryData {
     id: number,
     name: string,
     description: string
 }
+
+
 const EditQuiz: React.FC = () => {
     const form = useQuizForm();
     const navigate = useNavigate();
     const [updatedQuestions, setUpdatedQuestions] = useState<any[]>([]);
     const { id } = useParams();
-    const [quizData, setQuizData] = useState<quizData | null>(null);
     const [selected, setSelected] = useState<number[][]>([])
     const [category, setCategory] = useState<string[]>([])
     const [categories, setCategories] = useState<string[]>([])
@@ -38,14 +42,15 @@ const EditQuiz: React.FC = () => {
     }, []);
     const fetchData = async () => {
         try {
-            const data: quizData = await getQuizById(id);
+            const data: QuizApi = await getQuizById(id);
+            console.log(data.category)
             form.setValues({
                 title: quizItem.title,
                 description: quizItem.description,
-                category: quizItem.category,
+                category: data.category.map(cat => cat.name),
                 questions: data.questions
             })
-            setQuizData(data);
+
         }
 
         catch (error) {
@@ -65,9 +70,8 @@ const EditQuiz: React.FC = () => {
             console.log("Błąd przy pobieraniu kategorii");
         }
     }
-
     const handleSubmit = async () => {
-        const response = await fetch(`http://localhost:3333/api/quiz/${id}`, {
+        const response = await fetch(`http://localhost:5000/quiz/${id}`, {
             method: 'PATCH',
             headers: {
                 'Accept': 'application/json',
@@ -76,7 +80,6 @@ const EditQuiz: React.FC = () => {
             body: JSON.stringify(form.values),
             credentials: 'include'
         });
-        console.log(form.values);
         navigate('/');
 
     };
@@ -127,12 +130,6 @@ const EditQuiz: React.FC = () => {
         form.setFieldValue("questions", updatedQuestions);
     }
 
-    const handleSelectCategory = (category: string[]) => {
-        console.log(category)
-        setCategory(category);
-
-        form.setFieldValue("category", category);
-    }
 
     return (
         <Stack gap="md">
@@ -157,10 +154,10 @@ const EditQuiz: React.FC = () => {
                                 value: value,
                             }
                         ))}
-                        defaultValue={quizItem?.category}
-                        onChange={(value) => value && handleSelectCategory(value)}
 
                         clearable
+
+                        {...form.getInputProps('category')}
                     />
 
                 </div>
