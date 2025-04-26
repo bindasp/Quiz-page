@@ -137,11 +137,7 @@ export const Routing = () => {
 
     let routes;
 
-    if(isLogged == true && isAdmin==true)
-    {
-        routes = adminRoutes;
-    }
-    else if(isLogged==true&& isAdmin==false)
+    if(isLogged == true )
     {
         routes = privateRoutes;
     }
@@ -151,5 +147,6 @@ export const Routing = () => {
     }
 
 
+    console.log(routes);
     return useRoutes(routes);
 }
