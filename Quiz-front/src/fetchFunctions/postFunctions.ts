@@ -63,7 +63,7 @@ export const saveQuizAttempt = async (quizId: string | undefined, startTime?: Da
 
 export const saveQuizAnswer = async (testId: string | undefined, questionNumber: number, answerNumber: number) => {
     try {
-        const response = await fetch(`${API_URL}/attempt/answer`, {
+        const response = await fetch(`${API_URL}/attempt/answers`, {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
@@ -89,7 +89,7 @@ export const saveQuizAnswer = async (testId: string | undefined, questionNumber:
 
 export const saveMultipleQuizAnswers = async (testId: string | undefined, answers: { question_number: number, answer_number: number }[]) => {
     try {
-        const response = await fetch(`${API_URL}/attempt/answer`, {
+        const response = await fetch(`${API_URL}/attempt/answers`, {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',

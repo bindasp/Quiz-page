@@ -174,6 +174,7 @@ const Quiz = () => {
 
                 // Save all selected answers
                 if (answers.length > 0) {
+                    console.log(id)
                     saveMultipleQuizAnswers(id, answers).then(response => {
                         console.log("Quiz answers saved successfully", response);
                     }).catch(error => {
