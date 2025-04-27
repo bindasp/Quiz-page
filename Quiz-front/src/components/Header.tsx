@@ -1,4 +1,4 @@
-import { IconHome2, IconLogout, IconSettings, IconSquareRoundedLetterA } from "@tabler/icons-react";
+import { IconHome2, IconLogout, IconSettings, IconSquareRoundedLetterA, IconHistory } from "@tabler/icons-react";
 import { Button, Menu } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
 import "../features/styles/Header.css";
@@ -99,6 +99,9 @@ export const Header = () => {
                             <Menu.Label>Ustawienia</Menu.Label>
                             <Menu.Item onClick={() => navigate('/quizzes')} leftSection={<IconSettings />}>
                                 Moje quizy
+                            </Menu.Item>
+                            <Menu.Item onClick={() => navigate('/attempts')} leftSection={<IconHistory />}>
+                                Moje podejścia
                             </Menu.Item>
                             {isAdmin == true ?
                                 <Menu.Item onClick={() => navigate('/admin')} leftSection={<IconSquareRoundedLetterA />}>

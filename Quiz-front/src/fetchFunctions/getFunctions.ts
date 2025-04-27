@@ -1,3 +1,5 @@
+import {API_URL} from "../config";
+
 interface user {
     id: number;
     login: string;
@@ -83,5 +85,58 @@ export const getQuizzes = async (endpoint: string): Promise<quizData[]> => {
             'Content-Type': 'application/json',
         },
     });
+    return await response.json();
+}
+
+interface AttemptData {
+    user_id: number;
+    test_id: number;
+    start_time: string;
+    completion_time: string;
+    test_name: string;
+    test_description: string;
+}
+
+interface AttemptAnswer {
+    answer_content: string;
+    answer_number: number;
+    is_correct: boolean;
+    question_content: string;
+    question_number: number;
+}
+
+interface AttemptDetailData {
+    answers: AttemptAnswer[];
+    completed: boolean;
+    completion_time: string | null;
+    start_time: string;
+    test_id: number;
+    test_name: string;
+    user_id: number;
+}
+
+export const getAttemptById = async (id: number): Promise<AttemptDetailData> => {
+    const response = await fetch(`${API_URL}/attempt/${id}`, {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+        credentials: 'include'
+    });
+
+    return await response.json();
+}
+
+export const getUserAttempts = async (): Promise<AttemptData[]> => {
+    const response = await fetch(`${API_URL}/attempt`, {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+        credentials: 'include'
+    });
+
     return await response.json();
 }

@@ -3,6 +3,7 @@ import { useLocation, useParams } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import "../styles/Quiz.css";
 import { getQuizById } from "../../fetchFunctions/getFunctions";
+import { saveQuizAttempt, saveMultipleQuizAnswers } from "../../fetchFunctions/postFunctions";
 
 interface categoryData {
     id: number,
@@ -33,11 +34,13 @@ const Quiz = () => {
     const [points, setPoints] = useState<number>(0);
     const [selected, setSelected] = useState<number[][]>([])
     const [correctAnswers, setCorrectAnswers] = useState<number[][]>([])
+    const [startTime, setStartTime] = useState<Date | null>(null);
     const location = useLocation();
     const quizItem = location.state?.quizItem;
     console.log(id);
     useEffect(() => {
-
+        // Set start time when quiz is loaded
+        setStartTime(new Date());
         fetchData().then();
 
     }, [id]);
@@ -145,6 +148,41 @@ const Quiz = () => {
             const newPoints = calculatePoints(selected, correctAnswers);
             setPoints(newPoints);
             setShowAnswers(true);
+
+            // Capture completion time
+            const completionTime = new Date();
+
+            // Save quiz attempt to database with start and completion times
+            saveQuizAttempt(id, startTime || undefined, completionTime).then(response => {
+                console.log("Quiz attempt saved successfully", response);
+
+                // Prepare answers array for saving
+                const answers: { question_number: number, answer_number: number }[] = [];
+
+                // Loop through all selected answers
+                for (let questionIndex = 0; questionIndex < selected.length; questionIndex++) {
+                    for (let answerIndex = 0; answerIndex < selected[questionIndex].length; answerIndex++) {
+                        // If this answer is selected (value is 1)
+                        if (selected[questionIndex][answerIndex] === 1) {
+                            answers.push({
+                                question_number: questionIndex + 1, // Assuming question numbers start from 1
+                                answer_number: answerIndex + 1      // Assuming answer numbers start from 1
+                            });
+                        }
+                    }
+                }
+
+                // Save all selected answers
+                if (answers.length > 0) {
+                    saveMultipleQuizAnswers(id, answers).then(response => {
+                        console.log("Quiz answers saved successfully", response);
+                    }).catch(error => {
+                        console.error("Error saving quiz answers", error);
+                    });
+                }
+            }).catch(error => {
+                console.error("Error saving quiz attempt", error);
+            });
         }
     }
     return (
