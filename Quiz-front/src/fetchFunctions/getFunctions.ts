@@ -142,16 +142,14 @@ export const getUserAttempts = async (): Promise<AttemptData[]> => {
 }
 
 interface FeedbackData {
-    id: number;
-    test_id: string;
     user_id: number;
     comment: string;
     rating: number;
-    created_at: string;
+    username: string;
 }
 
 export const getQuizFeedback = async (quizId: string | undefined): Promise<FeedbackData[]> => {
-    const response = await fetch(`${API_URL}/feedback/${quizId}`, {
+    const response = await fetch(`${API_URL}/feedback/test/${quizId}`, {
         method: 'GET',
         headers: {
             'Accept': 'application/json',
@@ -160,5 +158,39 @@ export const getQuizFeedback = async (quizId: string | undefined): Promise<Feedb
         credentials: 'include'
     });
 
-    return await response.json();
+    const data = await response.json();
+    console.log(data);
+
+    // Check if data has a feedback property that is an array
+    if (data && data.feedback && Array.isArray(data.feedback)) {
+        return data.feedback;
+    }
+
+    // Fallback to the old format or return empty array
+    return Array.isArray(data) ? data : [];
+}
+
+interface QuizRatingData {
+    average_rating: number | null;
+    ratings_count: number;
+    test_id: number;
+    test_name: string;
+}
+
+interface QuizRatingsResponse {
+    tests: QuizRatingData[];
+    tests_count: number;
+}
+
+export const getQuizRatings = async (): Promise<QuizRatingData[]> => {
+    const response = await fetch(`${API_URL}/feedback/ratings`, {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        }
+    });
+
+    const data = await response.json() as QuizRatingsResponse;
+    return data.tests || [];
 }

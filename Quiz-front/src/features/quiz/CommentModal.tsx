@@ -4,12 +4,10 @@ import { getQuizFeedback } from '../../fetchFunctions/getFunctions';
 import '../styles/Quiz.css';
 
 interface FeedbackData {
-  id: number;
-  test_id: string;
   user_id: number;
   comment: string;
   rating: number;
-  created_at: string;
+  username: string;
 }
 
 interface CommentModalProps {
@@ -38,19 +36,11 @@ export const CommentModal: React.FC<CommentModalProps> = ({ quizId, opened, onCl
           setError('Nie udało się pobrać komentarzy');
           setLoading(false);
         });
+
+
     }
   }, [quizId, opened]);
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('pl-PL', { 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
 
   return (
     <Modal opened={opened} onClose={onClose} title="Komentarze do quizu" size="lg">
@@ -59,16 +49,16 @@ export const CommentModal: React.FC<CommentModalProps> = ({ quizId, opened, onCl
           <Text>Ładowanie komentarzy...</Text>
         ) : error ? (
           <Text color="red">{error}</Text>
-        ) : comments.length === 0 ? (
+        ) : !Array.isArray(comments) || comments.length === 0 ? (
           <Text>Brak komentarzy dla tego quizu</Text>
         ) : (
           <Stack>
-            {comments.map(comment => (
-              <div key={comment.id} className="comment-item">
+            {Array.isArray(comments) && comments.map(comment => (
+              <div key={comment.user_id} className="comment-item">
                 <Group justify="apart" mb={5}>
                   <Group>
                     <Badge color="blue" className="comment-rating">Ocena: {comment.rating}/5</Badge>
-                    <Text size="sm" className="comment-date">{formatDate(comment.created_at)}</Text>
+                    <Text size="sm" className="comment-username">Użytkownik: {comment.username}</Text>
                   </Group>
                 </Group>
                 <Text className="comment-text">{comment.comment || "Brak komentarza"}</Text>
