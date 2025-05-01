@@ -111,3 +111,29 @@ export const saveMultipleQuizAnswers = async (testId: string | undefined, answer
         console.log(e);
     }
 }
+
+export const saveQuizFeedback = async (quizId: string | undefined, comment: string, rating: number) => {
+    try {
+        const response = await fetch(`${API_URL}/feedback`, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                test_id: quizId,
+                comment: comment,
+                rating: rating
+            }),
+            credentials: 'include'
+        });
+
+        if (response.status !== 200) {
+            throw new Error("Nie udało się zapisać opinii o quizie");
+        }
+
+        return await response.json();
+    } catch (e) {
+        console.log(e);
+    }
+}

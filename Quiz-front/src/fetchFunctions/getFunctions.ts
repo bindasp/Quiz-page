@@ -140,3 +140,25 @@ export const getUserAttempts = async (): Promise<AttemptData[]> => {
 
     return await response.json();
 }
+
+interface FeedbackData {
+    id: number;
+    test_id: string;
+    user_id: number;
+    comment: string;
+    rating: number;
+    created_at: string;
+}
+
+export const getQuizFeedback = async (quizId: string | undefined): Promise<FeedbackData[]> => {
+    const response = await fetch(`${API_URL}/feedback/${quizId}`, {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+        credentials: 'include'
+    });
+
+    return await response.json();
+}

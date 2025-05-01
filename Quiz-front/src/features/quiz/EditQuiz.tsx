@@ -193,8 +193,7 @@ const EditQuiz: React.FC = () => {
                                 />
                                 <Checkbox m={'auto'} defaultChecked={question.answers[answerIndex].isCorrect}
                                     onChange={() => handleCheckboxClick(questionIndex, answerIndex)}
-                                >
-                                </Checkbox>
+                                />
                                 <IconX className={"delete-icon"} style={{ margin: "auto" }} onClick={() => handleDeleteAnswer(questionIndex, answerIndex)}></IconX>
 
                             </div>

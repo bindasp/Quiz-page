@@ -158,9 +158,7 @@ const QuizForm: React.FC = () => {
                                 />
                                 <Checkbox m={'auto'}
                                     onChange={() => handleCheckboxClick(questionIndex, answerIndex)}
-
-                                >
-                                </Checkbox>
+                                />
                                 <IconX className={"delete-icon"} style={{ margin: "auto" }} onClick={() => handleDeleteAnswer(questionIndex, answerIndex)}></IconX>
                             </div>
                         ))}

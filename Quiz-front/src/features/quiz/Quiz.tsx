@@ -1,9 +1,9 @@
-import { Button, Checkbox, Paper, Radio, Stack, Text, Title } from "@mantine/core";
+import { Button, Checkbox, Paper, Radio, Stack, Text, Title, Textarea, Group } from "@mantine/core";
 import { useLocation, useParams } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import "../styles/Quiz.css";
 import { getQuizById } from "../../fetchFunctions/getFunctions";
-import { saveQuizAttempt, saveMultipleQuizAnswers } from "../../fetchFunctions/postFunctions";
+import { saveQuizAttempt, saveMultipleQuizAnswers, saveQuizFeedback } from "../../fetchFunctions/postFunctions";
 
 interface categoryData {
     id: number,
@@ -35,6 +35,10 @@ const Quiz = () => {
     const [selected, setSelected] = useState<number[][]>([])
     const [correctAnswers, setCorrectAnswers] = useState<number[][]>([])
     const [startTime, setStartTime] = useState<Date | null>(null);
+    const [showFeedbackForm, setShowFeedbackForm] = useState<boolean>(false);
+    const [feedbackComment, setFeedbackComment] = useState<string>("");
+    const [feedbackRating, setFeedbackRating] = useState<number>(0);
+    const [feedbackSubmitted, setFeedbackSubmitted] = useState<boolean>(false);
     const location = useLocation();
     const quizItem = location.state?.quizItem;
     console.log(id);
@@ -148,6 +152,7 @@ const Quiz = () => {
             const newPoints = calculatePoints(selected, correctAnswers);
             setPoints(newPoints);
             setShowAnswers(true);
+            setShowFeedbackForm(true);
 
             // Capture completion time
             const completionTime = new Date();
@@ -185,6 +190,20 @@ const Quiz = () => {
                 console.error("Error saving quiz attempt", error);
             });
         }
+    }
+
+    const handleFeedbackSubmit = () => {
+        if (feedbackRating === 0) {
+            alert("Proszę ocenić quiz przed wysłaniem opinii");
+            return;
+        }
+
+        saveQuizFeedback(id, feedbackComment, feedbackRating).then(response => {
+            console.log("Quiz feedback saved successfully", response);
+            setFeedbackSubmitted(true);
+        }).catch(error => {
+            console.error("Error saving quiz feedback", error);
+        });
     }
     return (
         <div>
@@ -247,6 +266,79 @@ const Quiz = () => {
 
                 <Button display={showAnswers ? "none" : ""} style={{ width: "60%", margin: "auto" }}
                     onClick={handleSubmit}>Zatwierdź odpowiedzi</Button>
+
+                {showFeedbackForm && !feedbackSubmitted && (
+                    <Paper
+                        withBorder={true}
+                        shadow="xs"
+                        style={{ width: "60%", marginBottom: "20px", margin: "auto", padding: "16px", marginTop: "20px" }}
+                    >
+                        <Title order={3} ta="center" mb={15}>Oceń quiz</Title>
+                        <Text mb={10}>Twoja ocena:</Text>
+                        <Group justify="center" mb={15}>
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginRight: 10 }}>
+                                <Text mb={5}>1</Text>
+                                <Checkbox 
+                                    checked={feedbackRating === 1} 
+                                    onChange={() => setFeedbackRating(1)}
+                                />
+                            </div>
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginRight: 10 }}>
+                                <Text mb={5}>2</Text>
+                                <Checkbox 
+                                    checked={feedbackRating === 2} 
+                                    onChange={() => setFeedbackRating(2)}
+                                />
+                            </div>
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginRight: 10 }}>
+                                <Text mb={5}>3</Text>
+                                <Checkbox 
+                                    checked={feedbackRating === 3} 
+                                    onChange={() => setFeedbackRating(3)}
+                                />
+                            </div>
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginRight: 10 }}>
+                                <Text mb={5}>4</Text>
+                                <Checkbox 
+                                    checked={feedbackRating === 4} 
+                                    onChange={() => setFeedbackRating(4)}
+                                />
+                            </div>
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                <Text mb={5}>5</Text>
+                                <Checkbox 
+                                    checked={feedbackRating === 5} 
+                                    onChange={() => setFeedbackRating(5)}
+                                />
+                            </div>
+                        </Group>
+                        <Textarea
+                            placeholder="Twój komentarz (opcjonalnie)"
+                            value={feedbackComment}
+                            onChange={(e) => setFeedbackComment(e.currentTarget.value)}
+                            minRows={3}
+                            mb={15}
+                        />
+                        <Button 
+                            onClick={handleFeedbackSubmit}
+                            style={{ width: "100%" }}
+                        >
+                            Wyślij opinię
+                        </Button>
+                    </Paper>
+                )}
+
+                {feedbackSubmitted && (
+                    <Paper
+                        withBorder={true}
+                        shadow="xs"
+                        style={{ width: "60%", marginBottom: "20px", margin: "auto", padding: "16px", marginTop: "20px" }}
+                    >
+                        <Text ta="center" size="lg" fw={500} color="green">
+                            Dziękujemy za Twoją opinię!
+                        </Text>
+                    </Paper>
+                )}
             </Stack>
         </div>
     )
