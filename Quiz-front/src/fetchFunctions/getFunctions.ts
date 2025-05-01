@@ -169,28 +169,3 @@ export const getQuizFeedback = async (quizId: string | undefined): Promise<Feedb
     // Fallback to the old format or return empty array
     return Array.isArray(data) ? data : [];
 }
-
-interface QuizRatingData {
-    average_rating: number | null;
-    ratings_count: number;
-    test_id: number;
-    test_name: string;
-}
-
-interface QuizRatingsResponse {
-    tests: QuizRatingData[];
-    tests_count: number;
-}
-
-export const getQuizRatings = async (): Promise<QuizRatingData[]> => {
-    const response = await fetch(`${API_URL}/feedback/ratings`, {
-        method: 'GET',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-        }
-    });
-
-    const data = await response.json() as QuizRatingsResponse;
-    return data.tests || [];
-}
