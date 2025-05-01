@@ -27,6 +27,7 @@ interface AttemptDetailData {
     test_id: number;
     test_name: string;
     user_id: number;
+    score: number;
 }
 
 export const MyAttempts = () => {
@@ -62,10 +63,6 @@ export const MyAttempts = () => {
         }
     }
 
-    const calculateScore = (answers: AttemptAnswer[]) => {
-        const correctAnswers = answers.filter(answer => answer.is_correct).length;
-        return `${correctAnswers}/${answers.length}`;
-    }
 
     return (
         <div style={{ width: '100%' }}>
@@ -125,8 +122,8 @@ export const MyAttempts = () => {
                             </div>
                             <div>
                                 <Text fw={500}>Wynik:</Text>
-                                <Badge size="lg" color={selectedAttempt.answers.filter(a => a.is_correct).length === selectedAttempt.answers.length ? "green" : "yellow"}>
-                                    {calculateScore(selectedAttempt.answers)}
+                                <Badge size="lg" color={Number(selectedAttempt.score) === Array.from(new Set(selectedAttempt.answers.map(a => a.question_number))).length ? "green" : "yellow"}>
+                                    {Number.isInteger(Number(selectedAttempt.score)) ? Math.floor(Number(selectedAttempt.score)) : Number(selectedAttempt.score).toFixed(1)}/{Array.from(new Set(selectedAttempt.answers.map(a => a.question_number))).length}
                                 </Badge>
                             </div>
                         </Group>

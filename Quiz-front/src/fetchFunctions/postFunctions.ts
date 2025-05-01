@@ -102,7 +102,7 @@ export const saveMultipleQuizAnswers = async (testId: string | undefined, answer
             credentials: 'include'
         });
 
-        if (response.status !== 200) {
+        if (response.status !== 201) {
             throw new Error("Nie udało się zapisać odpowiedzi");
         }
 

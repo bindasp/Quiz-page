@@ -16,10 +16,18 @@ interface quizData {
     title: string;
     description: string;
     category: categoryData[];
-    questions: { question: string, answers: { answer: string, isCorrect: boolean }[] }[];
+    questions: { 
+        question: string, 
+        question_number: number,
+        answers: { 
+            answer: string, 
+            isCorrect: boolean,
+            answer_number: number 
+        }[] 
+    }[];
 }
 
-const shuffleArray = (array: { answer: string; isCorrect: boolean }[]): { answer: string; isCorrect: boolean }[] => {
+const shuffleArray = (array: { answer: string; isCorrect: boolean; answer_number: number }[]): { answer: string; isCorrect: boolean; answer_number: number }[] => {
     const shuffledArray = array.slice();
     for (let i = shuffledArray.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -41,7 +49,6 @@ const Quiz = () => {
     const [feedbackSubmitted, setFeedbackSubmitted] = useState<boolean>(false);
     const location = useLocation();
     const quizItem = location.state?.quizItem;
-    console.log(id);
     useEffect(() => {
         // Set start time when quiz is loaded
         setStartTime(new Date());
@@ -64,7 +71,6 @@ const Quiz = () => {
             console.error('Błąd podczas pobierania quizu');
         }
     }
-
     const handleCheckboxChange = (questionIndex: number, answerIndex: number) => {
         setSelected((prevSelected) => {
             const newSelected = [...prevSelected];
@@ -74,7 +80,7 @@ const Quiz = () => {
             return newSelected;
         });
     };
-
+    console.log(quizData)
     const handleRadioChange = (questionIndex: number, answerIndex: number) => {
         setSelected((prevSelected) => {
             const newSelected = [...prevSelected];
@@ -168,16 +174,17 @@ const Quiz = () => {
                 for (let questionIndex = 0; questionIndex < selected.length; questionIndex++) {
                     for (let answerIndex = 0; answerIndex < selected[questionIndex].length; answerIndex++) {
                         // If this answer is selected (value is 1)
-                        if (selected[questionIndex][answerIndex] === 1) {
+                        if (selected[questionIndex][answerIndex] === 1 && quizData) {
                             answers.push({
-                                question_number: questionIndex + 1, // Assuming question numbers start from 1
-                                answer_number: answerIndex + 1      // Assuming answer numbers start from 1
+                                question_number: quizData.questions[questionIndex].question_number,
+                                answer_number: quizData.questions[questionIndex].answers[answerIndex].answer_number
                             });
                         }
                     }
                 }
+                console.log("Odpowiedzi")
+                console.log(answers);
 
-                // Save all selected answers
                 if (answers.length > 0) {
                     console.log(id)
                     saveMultipleQuizAnswers(id, answers).then(response => {
@@ -191,6 +198,8 @@ const Quiz = () => {
             });
         }
     }
+
+
 
     const handleFeedbackSubmit = () => {
         if (feedbackRating === 0) {

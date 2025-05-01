@@ -14,7 +14,15 @@ interface quizData {
     title: string;
     description: string;
     category: categoryData[];
-    questions: { question: string, answers: [{ answer: string, isCorrect: boolean }] }[];
+    questions: { 
+        question: string, 
+        question_number: number,
+        answers: { 
+            answer: string, 
+            isCorrect: boolean,
+            answer_number: number 
+        }[] 
+    }[];
 }
 
 export const MyQuizzes = () => {

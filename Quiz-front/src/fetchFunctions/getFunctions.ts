@@ -10,7 +10,15 @@ interface quizData {
     title: string;
     description: string;
     category: categoryData[];
-    questions: { question: string, answers: [{ answer: string, isCorrect: boolean }] }[];
+    questions: { 
+        question: string, 
+        question_number: number,
+        answers: { 
+            answer: string, 
+            isCorrect: boolean,
+            answer_number: number 
+        }[] 
+    }[];
 }
 interface categoryData {
     id: number,
@@ -113,6 +121,7 @@ interface AttemptDetailData {
     test_id: number;
     test_name: string;
     user_id: number;
+    score: number;
 }
 
 export const getAttemptById = async (id: number): Promise<AttemptDetailData> => {
