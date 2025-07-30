@@ -1,5 +1,7 @@
 import { API_URL } from "../../config";
 
+const API_BASE = process.env.REACT_APP_API_BASE_URL || '/api';
+
 type RegisterFormType = {
     login: string;
     email: string;
@@ -8,7 +10,7 @@ type RegisterFormType = {
 }
 export const register = async (data: RegisterFormType) => {
 
-    const response = await fetch(`${API_URL}/register`, {
+    const response = await fetch(`${API_BASE}/register`, {
         method: 'POST',
         headers: {
             'Accept': 'application/json',

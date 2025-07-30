@@ -2,10 +2,12 @@ import {QuizFormValues} from "../types/QuizFormValues";
 import {UseFormReturnType} from "@mantine/form/lib";
 import {API_URL} from "../config";
 
+const API_BASE = process.env.REACT_APP_API_BASE_URL || '/api';
+
 export const logout = async()=> {
 
     try {
-        const response = await fetch(`${API_URL}/signout`, {
+        const response = await fetch(`${API_BASE}/signout`, {
             method: 'POST',
             headers: {
                 ContentType: 'application/json',
@@ -24,7 +26,7 @@ export const logout = async()=> {
 }
 
 export const postQuiz = async (form: UseFormReturnType<QuizFormValues>)=> {
-    const response = fetch(`${API_URL}/quiz`, {
+    const response = fetch(`${API_BASE}/quiz`, {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
@@ -37,7 +39,7 @@ export const postQuiz = async (form: UseFormReturnType<QuizFormValues>)=> {
 
 export const saveQuizAttempt = async (quizId: string | undefined, startTime?: Date, completionTime?: Date) => {
     try {
-        const response = await fetch(`${API_URL}/attempt`, {
+        const response = await fetch(`${API_BASE}/attempt`, {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
@@ -63,7 +65,7 @@ export const saveQuizAttempt = async (quizId: string | undefined, startTime?: Da
 
 export const saveQuizAnswer = async (testId: string | undefined, questionNumber: number, answerNumber: number) => {
     try {
-        const response = await fetch(`${API_URL}/attempt/answers`, {
+        const response = await fetch(`${API_BASE}/attempt/answers`, {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
@@ -89,7 +91,7 @@ export const saveQuizAnswer = async (testId: string | undefined, questionNumber:
 
 export const saveMultipleQuizAnswers = async (testId: string | undefined, answers: { question_number: number, answer_number: number }[]) => {
     try {
-        const response = await fetch(`${API_URL}/attempt/answers`, {
+        const response = await fetch(`${API_BASE}/attempt/answers`, {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
@@ -114,7 +116,7 @@ export const saveMultipleQuizAnswers = async (testId: string | undefined, answer
 
 export const saveQuizFeedback = async (quizId: string | undefined, comment: string, rating: number) => {
     try {
-        const response = await fetch(`${API_URL}/feedback`, {
+        const response = await fetch(`${API_BASE}/feedback`, {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',

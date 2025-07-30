@@ -1,7 +1,9 @@
 import { API_URL } from "../../config";
 
+const API_BASE = process.env.REACT_APP_API_BASE_URL || '/api';
+
 export const login = async (login: string, password: string) => {
-    const response = await fetch(`${API_URL}/login`, {
+    const response = await fetch(`${API_BASE}/login`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

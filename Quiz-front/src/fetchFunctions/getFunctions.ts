@@ -1,5 +1,7 @@
 import {API_URL} from "../config";
 
+const API_BASE = process.env.REACT_APP_API_BASE_URL || '/api';
+
 interface user {
     id: number;
     login: string;
@@ -26,7 +28,7 @@ interface categoryData {
     description: string
 }
 export const getUsers = async (): Promise<user[]> => {
-    const response = await fetch(`http://localhost:3333/api/admin/user`, {
+    const response = await fetch(`${API_BASE}/api/admin/user`, {
         method: 'GET',
         headers: {
             'Accept': 'application/json',
@@ -38,7 +40,7 @@ export const getUsers = async (): Promise<user[]> => {
 }
 
 export const getAllQuizzes = async (): Promise<quizData[]> => {
-    const response = await fetch(`http://localhost:3333/api/admin/quiz`, {
+    const response = await fetch(`${API_BASE}/api/admin/quiz`, {
         method: 'GET',
         headers: {
             'Accept': 'application/json',
@@ -50,7 +52,7 @@ export const getAllQuizzes = async (): Promise<quizData[]> => {
 }
 
 export const getQuizById = async (id: string | undefined): Promise<quizData> => {
-    const response = await fetch(`http://localhost:5000/quiz/${id}`, {
+    const response = await fetch(`${API_BASE}/quiz/${id}`, {
         method: 'GET',
         headers: {
             'Accept': 'application/json',
@@ -62,7 +64,7 @@ export const getQuizById = async (id: string | undefined): Promise<quizData> => 
 }
 
 export const getCategories = async (): Promise<categoryData[]> => {
-    const response = await fetch(`http://localhost:5000/category`, {
+    const response = await fetch(`${API_BASE}/category`, {
         method: 'GET',
         headers: {
             'Accept': 'application/json',
@@ -73,7 +75,7 @@ export const getCategories = async (): Promise<categoryData[]> => {
     return await response.json();
 }
 export const getUserQuizzes = async (): Promise<quizData[]> => {
-    const response = await fetch(`http://localhost:5000/quiz`, {
+    const response = await fetch(`${API_BASE}/quiz`, {
         method: 'GET',
         headers: {
             'Accept': 'application/json',
@@ -125,7 +127,7 @@ interface AttemptDetailData {
 }
 
 export const getAttemptById = async (id: number): Promise<AttemptDetailData> => {
-    const response = await fetch(`${API_URL}/attempt/${id}`, {
+    const response = await fetch(`${API_BASE}/attempt/${id}`, {
         method: 'GET',
         headers: {
             'Accept': 'application/json',
@@ -138,7 +140,7 @@ export const getAttemptById = async (id: number): Promise<AttemptDetailData> => 
 }
 
 export const getUserAttempts = async (): Promise<AttemptData[]> => {
-    const response = await fetch(`${API_URL}/attempt`, {
+    const response = await fetch(`${API_BASE}/attempt`, {
         method: 'GET',
         headers: {
             'Accept': 'application/json',
@@ -158,7 +160,7 @@ interface FeedbackData {
 }
 
 export const getQuizFeedback = async (quizId: string | undefined): Promise<FeedbackData[]> => {
-    const response = await fetch(`${API_URL}/feedback/test/${quizId}`, {
+    const response = await fetch(`${API_BASE}/feedback/test/${quizId}`, {
         method: 'GET',
         headers: {
             'Accept': 'application/json',
