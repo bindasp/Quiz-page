@@ -8,6 +8,8 @@ import "../styles/Forms.css"
 import { getCategories, getQuizById } from "../../fetchFunctions/getFunctions";
 import { deleteQuiz } from "../../fetchFunctions/deleteFunctions";
 
+const API_BASE = process.env.REACT_APP_API_BASE_URL || '/api';
+
 interface QuizApi {
     id?: string;
     title: string;
@@ -71,7 +73,7 @@ const EditQuiz: React.FC = () => {
         }
     }
     const handleSubmit = async () => {
-        const response = await fetch(`http://localhost:5000/quiz/${id}`, {
+        const response = await fetch(`${API_BASE}/quiz/${id}`, {
             method: 'PATCH',
             headers: {
                 'Accept': 'application/json',

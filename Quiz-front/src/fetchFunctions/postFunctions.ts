@@ -1,6 +1,5 @@
 import {QuizFormValues} from "../types/QuizFormValues";
 import {UseFormReturnType} from "@mantine/form/lib";
-import {API_URL} from "../config";
 
 const API_BASE = process.env.REACT_APP_API_BASE_URL || '/api';
 
