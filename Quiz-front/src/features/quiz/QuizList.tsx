@@ -4,6 +4,8 @@ import React, { useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { getQuizzes } from "../../fetchFunctions/getFunctions";
 
+const API_BASE = process.env.REACT_APP_API_BASE_URL || '/api';
+
 interface categoryData {
     id: number,
     name: string,
@@ -39,8 +41,8 @@ export const QuizList = () => {
     const fetchData = async () => {
 
         const endpoint = params != ''
-            ? `http://localhost:5000/quiz/random?amount=20&${params.slice(1)}`
-            : `http://localhost:5000/quiz/random?amount=20`;
+            ? `${API_BASE}/quiz/random?amount=20&${params.slice(1)}`
+            : `${API_BASE}/quiz/random?amount=20`;
 
         const quizData: quizData[] = await getQuizzes(endpoint);
         setData(quizData);
