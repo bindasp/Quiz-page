@@ -58,7 +58,7 @@ export const Header = () => {
                     size={"lg"}
                     style={{ marginLeft: '30px', width: '200px', height: "50px", marginTop: '25px' }}
                     fw={800}
-                    onClick={() => { navigate('/') }}
+                    onClick={() => { navigate('/?category=brak') }}
                     leftSection={<IconHome2 size="1rem" stroke={1.5}
                     />}
                 >Quizy</Button>
