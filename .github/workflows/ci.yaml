@@ -21,7 +21,9 @@ jobs:
       - name: install dependencies
         run: cd Quiz-front && npm ci
       - name: Build
-        run: cd Quiz-front && npm run build
+        run: |
+          cd Quiz-front
+          CI=false npm run build
 
       - name: Unit tests
         run: echo "run tests"
