@@ -19,7 +19,7 @@ jobs:
         with:
           node-version: 18
       - name: install dependencies
-        uses: cd Quiz-front && npm ci
+        run: cd Quiz-front && npm ci
       - name: Build
         run: cd Quiz-front && npm run build
 
