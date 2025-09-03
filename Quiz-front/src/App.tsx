@@ -76,12 +76,12 @@ const theme = createTheme({
 
     components: {
         Button: Button.extend({ defaultProps:{
-             color: "emerald-green.7",
+             color: "red",
             variant:'outline'
 
             }}),
         Card: Card.extend({defaultProps:{
-            bg:"emerald-green.7",
+            bg:"red",
                 style:{color:"black"}
 
             }})
