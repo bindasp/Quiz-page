@@ -72,7 +72,7 @@ const theme = createTheme({
             "#138542"
         ]
     },
-    primaryColor: 'red',
+    primaryColor: 'white',
 
     components: {
         Button: Button.extend({ defaultProps:{
