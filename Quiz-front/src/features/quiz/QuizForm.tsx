@@ -1,48 +1,48 @@
-import React, {useEffect, useState} from "react";
-import {Button, Checkbox, MultiSelect, Paper, Stack, Textarea, TextInput} from "@mantine/core";
-import {useQuizForm} from "./hooks/useQuizForm";
-import {IconX} from "@tabler/icons-react";
-import {useNavigate} from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Button, Checkbox, MultiSelect, Paper, Stack, Textarea, TextInput } from "@mantine/core";
+import { useQuizForm } from "./hooks/useQuizForm";
+import { IconX } from "@tabler/icons-react";
+import { useNavigate } from "react-router-dom";
 import "../styles/Forms.css"
-import {getCategories} from "../../fetchFunctions/getFunctions";
-import {postQuiz} from "../../fetchFunctions/postFunctions";
+import { getCategories } from "../../fetchFunctions/getFunctions";
+import { postQuiz } from "../../fetchFunctions/postFunctions";
 
-interface categoryData{
-    id:number,
-    categoryName: string
+interface categoryData {
+    id: number,
+    name: string,
+    description: string
 }
 
 const QuizForm: React.FC = () => {
     const form = useQuizForm();
     const navigate = useNavigate();
-    const [updatedQuestions, setUpdatedQuestions] = useState<any[]>([]);
     const [category, setCategory] = useState<string[]>([])
     const [categories, setCategories] = useState<string[]>([])
     useEffect(() => {
 
         fetchCategories().then();
-    },[]);
+    }, []);
 
     const handleSubmit = async () => {
-        try{
+        try {
             await postQuiz(form);
             navigate('/')
         }
-        catch(error){
+        catch (error) {
             console.log("Bład poczas wysyłania quizu")
         }
     };
 
-    const fetchCategories = async ()=>{
-        try{
-            const cat:categoryData[] = await getCategories();
-            const newCategories:string[] = [];
+    const fetchCategories = async () => {
+        try {
+            const cat: categoryData[] = await getCategories();
+            const newCategories: string[] = [];
             cat.map(value => {
-                newCategories.push(value.categoryName);
+                newCategories.push(value.name);
             })
             setCategories(newCategories);
         }
-        catch(error){
+        catch (error) {
             console.log("Błąd przy pobieraniu kategorii");
         }
     }
@@ -52,7 +52,7 @@ const QuizForm: React.FC = () => {
 
         const newQuestion = {
             question: "",
-            answers: [{answer: "", isCorrect: false}]
+            answers: [{ answer: "", isCorrect: false }]
         };
 
         Questions.push(newQuestion);
@@ -61,16 +61,16 @@ const QuizForm: React.FC = () => {
     };
 
     const handleAddAnswer = (questionIndex: number) => {
-        const newAnswer ={answer: "", isCorrect: false};
+        const newAnswer = { answer: "", isCorrect: false };
         const updatedQuestions = [...form.values.questions];
-         updatedQuestions[questionIndex].answers.push(newAnswer);
+        updatedQuestions[questionIndex].answers.push(newAnswer);
         form.setFieldValue("questions", updatedQuestions);
     };
 
     const handleCheckboxClick = (questionIndex: number, answerIndex: number) => {
-        if(!form.values.questions[questionIndex].answers[answerIndex].isCorrect)
+        if (!form.values.questions[questionIndex].answers[answerIndex].isCorrect)
             form.values.questions[questionIndex].answers[answerIndex].isCorrect = true;
-        else if(form.values.questions[questionIndex].answers[answerIndex].isCorrect)
+        else if (form.values.questions[questionIndex].answers[answerIndex].isCorrect)
             form.values.questions[questionIndex].answers[answerIndex].isCorrect = false;
 
     };
@@ -84,13 +84,13 @@ const QuizForm: React.FC = () => {
     };
 
 
-    const handleDeleteQuestion = (questionIndex:number)=>{
+    const handleDeleteQuestion = (questionIndex: number) => {
         const updatedQuestions = [...form.values.questions];
         updatedQuestions.splice(questionIndex, 1);
         form.setFieldValue("questions", updatedQuestions);
     }
 
-    const handleSelectCategory = (category:string[])=>{
+    const handleSelectCategory = (category: string[]) => {
 
         setCategory(category);
 
@@ -98,11 +98,11 @@ const QuizForm: React.FC = () => {
     }
 
     return (
-        <Stack  gap="md">
+        <Stack gap="md">
             <form onSubmit={form.onSubmit(handleSubmit)}>
-                <div style={{display: "flex", margin: "auto", maxWidth: "1000px",marginBottom: "15px"}}>
+                <div style={{ display: "flex", margin: "auto", maxWidth: "1000px", marginBottom: "15px" }}>
                     <TextInput
-                        style={{width: "480px", marginRight:"50px"}}
+                        style={{ width: "480px", marginRight: "50px" }}
                         withAsterisk
                         label={"Tytuł"}
                         placeholder={"Podaj tytuł quizu"}
@@ -114,7 +114,7 @@ const QuizForm: React.FC = () => {
                         placeholder={"Wybierz kategorię"}
                         checkIconPosition={"right"}
                         maxValues={3}
-                        style={{width: "480px", alignContent:"flex-end"}}
+                        style={{ width: "480px", alignContent: "flex-end" }}
                         data={categories.map((value) => (
                             {
                                 label: value,
@@ -122,7 +122,7 @@ const QuizForm: React.FC = () => {
                             }
                         ))}
 
-                        onChange={(value)=> value && handleSelectCategory(value)}
+                        onChange={(value) => value && handleSelectCategory(value)}
                         clearable
                     />
 
@@ -130,13 +130,13 @@ const QuizForm: React.FC = () => {
                 <Textarea
                     label={"Opis"}
                     placeholder={"Dodaj opis"}
-                    style={{minHeight: "80px", maxWidth: "1000px", margin: "auto"}}
+                    style={{ minHeight: "80px", maxWidth: "1000px", margin: "auto" }}
                     {...form.getInputProps('description')}
                 />
 
                 {form.values.questions && form.values.questions.map((question, questionIndex) => (
                     <Paper mt={10} key={questionIndex} withBorder={true} shadow="xs"
-                           style={{maxWidth: "1000px", margin: "auto", padding: "16px"}}>
+                        style={{ maxWidth: "1000px", margin: "auto", padding: "16px" }}>
                         <TextInput
                             label={"Pytanie " + (questionIndex + 1)}
                             withAsterisk
@@ -146,7 +146,7 @@ const QuizForm: React.FC = () => {
 
                         />
                         {question.answers && question.answers.map((answer, answerIndex) => (
-                            <div className={"check"} key={answerIndex} style={{marginTop:"5px"}}>
+                            <div className={"check"} key={answerIndex} style={{ marginTop: "5px" }}>
 
                                 <TextInput
                                     w={1000}
@@ -157,31 +157,29 @@ const QuizForm: React.FC = () => {
                                     mr={5}
                                 />
                                 <Checkbox m={'auto'}
-                                          onChange={() => handleCheckboxClick(questionIndex, answerIndex)}
-
-                                >
-                                </Checkbox>
-                                <IconX  className={"delete-icon"} style={{margin:"auto"}} onClick={()=>handleDeleteAnswer(questionIndex, answerIndex)}></IconX>
+                                    onChange={() => handleCheckboxClick(questionIndex, answerIndex)}
+                                />
+                                <IconX className={"delete-icon"} style={{ margin: "auto" }} onClick={() => handleDeleteAnswer(questionIndex, answerIndex)}></IconX>
                             </div>
                         ))}
-                        <div style={{display:"flex"}}>
-                        <Button mr={"20px"}
-                            onClick={() => handleAddAnswer(questionIndex)}
-                            style={{width: "20%", marginTop: "10px"}}
-                        >
-                            Dodaj odpowiedź
-                        </Button>
+                        <div style={{ display: "flex" }}>
+                            <Button mr={"20px"}
+                                onClick={() => handleAddAnswer(questionIndex)}
+                                style={{ width: "20%", marginTop: "10px" }}
+                            >
+                                Dodaj odpowiedź
+                            </Button>
                             <Button
                                 onClick={() => handleDeleteQuestion(questionIndex)}
-                                style={{width: "20%", marginTop: "10px"}}
+                                style={{ width: "20%", marginTop: "10px" }}
                             >Usuń pytanie</Button>
                         </div>
                     </Paper>
                 ))}
 
-                <div style={{display:"flex", maxWidth:"1000px", margin:"auto"}}>
-                    <Button style={{marginTop:"15px", width:"20%", marginRight:"auto"}} onClick={handleAddQuestion}>Dodaj pytanie</Button>
-                    <Button type="submit" style={{marginTop:"15px", width:"20%", marginLeft:"auto"}}>Zapisz quiz</Button>
+                <div style={{ display: "flex", maxWidth: "1000px", margin: "auto" }}>
+                    <Button style={{ marginTop: "15px", width: "20%", marginRight: "auto" }} onClick={handleAddQuestion}>Dodaj pytanie</Button>
+                    <Button type="submit" style={{ marginTop: "15px", width: "20%", marginLeft: "auto" }}>Zapisz quiz</Button>
 
                 </div>
             </form>

@@ -1,23 +1,35 @@
-import {List, rem, SimpleGrid, Stack, Table, TableTr, Tabs} from "@mantine/core";
-import React, {useEffect, useState} from "react";
-import {IconList, IconMessageCircle, IconUsers} from "@tabler/icons-react";
-import {QuizListItem} from "./QuizListItem";
-import {UserItem} from "./UserItem";
-import {getAllQuizzes, getUsers} from "../../fetchFunctions/getFunctions";
+import { List, rem, SimpleGrid, Stack, Table, TableTr, Tabs } from "@mantine/core";
+import React, { useEffect, useState } from "react";
+import { IconList, IconMessageCircle, IconUsers } from "@tabler/icons-react";
+import { QuizListItem } from "./QuizListItem";
+import { UserItem } from "./UserItem";
+import { getAllQuizzes, getUsers } from "../../fetchFunctions/getFunctions";
 
-interface quizData{
-    id?:string;
+interface quizData {
+    id?: string;
     title: string;
-    description:string;
-    category: string[];
-    questions: {question:string, answers:[{answer:string, isCorrect: boolean}]}[];
+    description: string;
+    category: categoryData[];
+    questions: { 
+        question: string, 
+        question_number: number,
+        answers: { 
+            answer: string, 
+            isCorrect: boolean,
+            answer_number: number 
+        }[] 
+    }[];
 }
-interface user{
-    id:number;
-    login:string;
-    email:string;
+interface user {
+    id: number;
+    login: string;
+    email: string;
 }
-
+interface categoryData {
+    id: number,
+    name: string,
+    description: string
+}
 export const Admin = () => {
     const iconStyle = { width: rem(12), height: rem(12) };
 
@@ -25,21 +37,21 @@ export const Admin = () => {
     const [userData, setUserData] = useState<user[]>([])
     useEffect(() => {
 
-       const fetchUsers = async () =>{
-           try{
-               const users:user[] = await getUsers();
-               setUserData(users);
-           }
-           catch (error){
-               console.error("Błąd przy pobieraniu użytkowników")
-           }
-       }
+        const fetchUsers = async () => {
+            try {
+                const users: user[] = await getUsers();
+                setUserData(users);
+            }
+            catch (error) {
+                console.error("Błąd przy pobieraniu użytkowników")
+            }
+        }
         const fetchData = async () => {
             try {
                 const quizData: quizData[] = await getAllQuizzes();
                 setData(quizData);
             }
-            catch(error){
+            catch (error) {
                 console.error("Błąd przy pobieraniu quizów")
             }
         }
@@ -68,14 +80,14 @@ export const Admin = () => {
                         </Table.Tr>
                     </Table.Thead>
                     <Table.Tbody>
-                        {userData.map((item)=> <UserItem id={item.id} login={item.login} email={item.email}></UserItem>)}
+                        {userData.map((item) => <UserItem id={item.id} login={item.login} email={item.email}></UserItem>)}
                     </Table.Tbody>
                 </Table>
             </Tabs.Panel>
 
             <Tabs.Panel value="Quizy">
-                <SimpleGrid cols={{base:1, sm:2, lg:3}}>
-                    {data.map((item)=> <QuizListItem key={item.id} item={item}/>)}
+                <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }}>
+                    {data.map((item) => <QuizListItem key={item.id} item={item} />)}
                 </SimpleGrid>
             </Tabs.Panel>
 

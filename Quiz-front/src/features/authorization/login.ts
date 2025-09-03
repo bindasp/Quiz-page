@@ -1,14 +1,15 @@
-import {API_URL} from "../../config";
 
-export const login = async (login: string, password:string)=>{
-    const response = await fetch(`${API_URL}/auth/signin`, {
+const API_BASE = process.env.REACT_APP_API_BASE_URL || '/api';
+
+export const login = async (login: string, password: string) => {
+    const response = await fetch(`${API_BASE}/login`, {
         method: 'POST',
         headers: {
-            ContentType: 'application/json',
-            Authorization: 'Basic ' + window.btoa(login + ":" + password),
+            'Content-Type': 'application/json',
         },
+        body: JSON.stringify({ login, password }),
         credentials: 'include'
     });
-    if (response.status !== 201) throw new Error("Logowanie się nie powiodło");
+    if (response.status !== 200) throw new Error("Logowanie się nie powiodło");
 
 }

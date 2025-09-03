@@ -8,6 +8,7 @@ import RegisterForm from "./authorization/RegisterForm";
 import Quiz from "./quiz/Quiz";
 import {useIsLogged} from "../hooks/useIsLogged";
 import {MyQuizzes} from "./quiz/MyQuizzes";
+import {MyAttempts} from "./quiz/MyAttempts";
 import EditQuiz from "./quiz/EditQuiz";
 import {Admin} from "./quiz/Admin";
 import {useIsAdmin} from "../hooks/useIsAdmin";
@@ -75,6 +76,10 @@ const privateRoutes: RouteObject[] = [
               element: <MyQuizzes></MyQuizzes>
             },
             {
+              path:'/attempts',
+              element: <MyAttempts></MyAttempts>
+            },
+            {
               path:'/quiz/:id/edit',
                 element: <EditQuiz></EditQuiz>
             },
@@ -116,6 +121,10 @@ const adminRoutes: RouteObject[] = [
                 element: <MyQuizzes></MyQuizzes>
             },
             {
+                path:'/attempts',
+                element: <MyAttempts></MyAttempts>
+            },
+            {
                 path:'/quiz/:id/edit',
                 element: <EditQuiz></EditQuiz>
             },
@@ -137,11 +146,7 @@ export const Routing = () => {
 
     let routes;
 
-    if(isLogged == true && isAdmin==true)
-    {
-        routes = adminRoutes;
-    }
-    else if(isLogged==true&& isAdmin==false)
+    if(isLogged == true )
     {
         routes = privateRoutes;
     }
@@ -151,5 +156,6 @@ export const Routing = () => {
     }
 
 
+    console.log(routes);
     return useRoutes(routes);
 }
