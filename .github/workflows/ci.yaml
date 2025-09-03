@@ -54,7 +54,7 @@ jobs:
           context: .
           file: Dockerfile
           push: true
-          tags: ${{secrets.DOCKER_USERNAME}}/quiz-backend:${{github.run_id}}
+          tags: ${{secrets.DOCKER_USERNAME}}/quiz-frontend:${{github.run_id}}
   updatek8s:
     runs-on: ubuntu-latest
 
@@ -68,13 +68,13 @@ jobs:
 
       - name: Update image tag in kubernetes deployment manifest
         run: |
-          cd k8s/backend
+          cd k8s/frontend
           sed -i 's|image: .*|image: ${{secrets.DOCKER_USERNAME}}/quiz-frontend:${{github.run_id}}|' frontend-deployment.yaml
 
       - name: Commit and push changes
         run: |
-          git config --global user.email "bindas.patryk@gmail.com"
-          git config --global user.name "bindasp"
+          git config --global user.email "${{vars.EMAIL}}"
+          git config --global user.name "${{vars.USERNAME}}"
           git add k8s/frontend/frontend-deployment.yaml
           git commit -m "[CI] Update frontend image tag"
           git push origin main
