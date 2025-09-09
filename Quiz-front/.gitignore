@@ -24,7 +24,6 @@ chrome-user-data
 *.swp
 *.swo
 
-package-lock.json
 packages/react-devtools-core/dist
 packages/react-devtools-extensions/chrome/build
 packages/react-devtools-extensions/chrome/*.crx
@@ -132,7 +131,6 @@ npm-debug.log
 npm-debug.log*
 yarn-error.log*
 junit.xml
-package-lock.json
 
 *.tsbuildinfo
 api-extractor.json
