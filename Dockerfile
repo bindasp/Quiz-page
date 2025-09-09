@@ -4,7 +4,8 @@ WORKDIR /app
 
 COPY Quiz-front/package*.json ./
 
-RUN npm install
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci
 
 COPY ./Quiz-front .
 
