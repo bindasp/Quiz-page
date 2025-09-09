@@ -21,6 +21,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 18
+
+      - name: cache dependencies
+        uses: actions@/cache@v3
+        with:
+          path: ~/.npm
+          key: dependencies-node-modules-${{hashFiles('**/package-lock.json')}}
       - name: install dependencies
         run: cd Quiz-front && npm ci
 
@@ -31,6 +37,17 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      - name: setup nodeJS
+        uses: actions/setup-node@v4
+
+      - name: cache dependencies
+        uses: actions@/cache@v3
+        with:
+          path: ~/.npm
+          key: dependencies-node-modules-${{hashFiles('**/package-lock.json')}}
+
+      - name: install dependencies
+        run: cd Quiz-front && npm ci
       - name: Run eslint
         run: echo "run eslint"
   docker:
