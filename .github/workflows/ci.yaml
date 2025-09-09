@@ -6,6 +6,7 @@ on:
   pull_request:
     branches:
       - master
+  workflow_dispatch:
 
 jobs:
   build:
@@ -26,7 +27,7 @@ jobs:
           CI=false npm run build
 
       - name: Unit tests
-        run: echo "run tests"
+        run: cd Quiz-front && npm test
   code-quality:
     runs-on: ubuntu-latest
     steps:
