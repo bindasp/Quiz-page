@@ -23,7 +23,7 @@ jobs:
           node-version: 18
 
       - name: cache dependencies
-        uses: actions@/cache@v3
+        uses: actions/cache@v3
         with:
           path: ~/.npm
           key: dependencies-node-modules-${{hashFiles('**/package-lock.json')}}
