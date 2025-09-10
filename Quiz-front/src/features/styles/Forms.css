@@ -1,12 +1,11 @@
-.quiz:hover{
-    transform: scale(1.01);
-    z-index: 1;
+.quiz:hover {
+  transform: scale(1.01);
+  z-index: 1;
 }
 
-.check{
-    display: flex;
+.check {
+  display: flex;
 }
-.answer:hover{
-    border:10px
+.answer:hover {
+  border: 10px;
 }
-

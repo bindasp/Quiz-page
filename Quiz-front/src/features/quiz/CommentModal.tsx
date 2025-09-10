@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, Text, Group, Stack, Title, Divider, Badge } from '@mantine/core';
+import {
+  Modal,
+  Text,
+  Group,
+  Stack,
+  Title,
+  Divider,
+  Badge,
+} from '@mantine/core';
 import { getQuizFeedback } from '../../fetchFunctions/getFunctions';
 import '../styles/Quiz.css';
 
@@ -16,7 +24,11 @@ interface CommentModalProps {
   onClose: () => void;
 }
 
-export const CommentModal: React.FC<CommentModalProps> = ({ quizId, opened, onClose }) => {
+export const CommentModal: React.FC<CommentModalProps> = ({
+  quizId,
+  opened,
+  onClose,
+}) => {
   const [comments, setComments] = useState<FeedbackData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -27,23 +39,25 @@ export const CommentModal: React.FC<CommentModalProps> = ({ quizId, opened, onCl
       setError(null);
 
       getQuizFeedback(quizId)
-        .then(data => {
+        .then((data) => {
           setComments(data);
           setLoading(false);
         })
-        .catch(err => {
+        .catch((err) => {
           console.error('Error fetching comments:', err);
           setError('Nie udało się pobrać komentarzy');
           setLoading(false);
         });
-
-
     }
   }, [quizId, opened]);
 
-
   return (
-    <Modal opened={opened} onClose={onClose} title="Komentarze do quizu" size="lg">
+    <Modal
+      opened={opened}
+      onClose={onClose}
+      title="Komentarze do quizu"
+      size="lg"
+    >
       <div className="comment-modal-content">
         {loading ? (
           <Text>Ładowanie komentarzy...</Text>
@@ -53,17 +67,24 @@ export const CommentModal: React.FC<CommentModalProps> = ({ quizId, opened, onCl
           <Text>Brak komentarzy dla tego quizu</Text>
         ) : (
           <Stack>
-            {Array.isArray(comments) && comments.map(comment => (
-              <div key={comment.user_id} className="comment-item">
-                <Group justify="apart" mb={5}>
-                  <Group>
-                    <Badge color="blue" className="comment-rating">Ocena: {comment.rating}/5</Badge>
-                    <Text size="sm" className="comment-username">Użytkownik: {comment.username}</Text>
+            {Array.isArray(comments) &&
+              comments.map((comment) => (
+                <div key={comment.user_id} className="comment-item">
+                  <Group justify="apart" mb={5}>
+                    <Group>
+                      <Badge color="blue" className="comment-rating">
+                        Ocena: {comment.rating}/5
+                      </Badge>
+                      <Text size="sm" className="comment-username">
+                        Użytkownik: {comment.username}
+                      </Text>
+                    </Group>
                   </Group>
-                </Group>
-                <Text className="comment-text">{comment.comment || "Brak komentarza"}</Text>
-              </div>
-            ))}
+                  <Text className="comment-text">
+                    {comment.comment || 'Brak komentarza'}
+                  </Text>
+                </div>
+              ))}
           </Stack>
         )}
       </div>

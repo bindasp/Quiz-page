@@ -1,5 +1,5 @@
-import {Title} from "@mantine/core";
+import { Title } from '@mantine/core';
 
 export const ErrorPage = () => {
-  return <Title>Strona o podanym adresie nie istnieje </Title>
-}
+  return <Title>Strona o podanym adresie nie istnieje </Title>;
+};

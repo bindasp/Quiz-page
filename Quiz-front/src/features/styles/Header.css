@@ -1,17 +1,17 @@
-.Header{
-    display: flex;
-    padding-right: 10px;
+.Header {
+  display: flex;
+  padding-right: 10px;
 }
-.Logo{
-    width :100%;
+.Logo {
+  width: 100%;
 }
 
-.Buttons{
-    margin-top: 25px;
-    display:flex;
-    width: 100%;
-    justify-content: right;
+.Buttons {
+  margin-top: 25px;
+  display: flex;
+  width: 100%;
+  justify-content: right;
 }
-.Button{
-    margin-right:30px;
+.Button {
+  margin-right: 30px;
 }

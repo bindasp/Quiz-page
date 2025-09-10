@@ -22,7 +22,7 @@ describe('Header component', () => {
         <MemoryRouter>
           <Header />
         </MemoryRouter>
-      </MantineProvider>
+      </MantineProvider>,
     );
 
     expect(screen.getByText(/Zaloguj się/i)).toBeInTheDocument();
@@ -38,7 +38,7 @@ describe('Header component', () => {
         <MemoryRouter>
           <Header />
         </MemoryRouter>
-      </MantineProvider>
+      </MantineProvider>,
     );
 
     expect(screen.getByText(/Konto/i)).toBeInTheDocument();
