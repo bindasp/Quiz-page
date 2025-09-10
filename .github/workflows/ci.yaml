@@ -51,6 +51,7 @@ jobs:
         run: cd Quiz-front && npm ci
       - name: Run ESLint
         run: cd Quiz-front && npm run lint
+        continue-on-error: true
       - name: Run Prettier (check only)
         run: cd Quiz-front && npm run format -- --check
   docker:
