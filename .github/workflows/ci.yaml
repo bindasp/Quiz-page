@@ -33,6 +33,7 @@ jobs:
       - name: Unit tests
         run: cd Quiz-front && npm test
   code-quality:
+    continue-on-error: true
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -48,8 +49,10 @@ jobs:
 
       - name: install dependencies
         run: cd Quiz-front && npm ci
-      - name: Run eslint
-        run: echo "run eslint"
+      - name: Run ESLint
+        run: cd Quiz-front && npm run lint
+      - name: Run Prettier (check only)
+        run: cd Quiz-front && npm run format -- --check
   docker:
     runs-on: ubuntu-latest
 
