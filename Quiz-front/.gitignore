@@ -39,7 +39,7 @@ packages/react-devtools-timeline/dist
 #Mantine
 # os
 .DS_Store
-
+.env
 ## yarn
 .yarn-integrity
 .yarn/cache
