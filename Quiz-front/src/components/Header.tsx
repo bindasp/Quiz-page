@@ -70,6 +70,9 @@ export const Header = () => {
         >
           Quizy
         </Button>
+
+        
+
         {isLogged ? (
           <Menu trigger={'hover'} width={200}>
             <Menu.Target>

@@ -63,7 +63,31 @@ export const Admin = () => {
 
     fetchUsers().then();
     fetchData().then();
-  }, [userData]);
+  }, []);
+
+  const refetchData = () => {
+
+    const fetchUsers = async () => {
+      try {
+        const users: user[] = await getUsers();
+        setUserData(users);
+      } catch (error) {
+        console.error('Błąd przy pobieraniu użytkowników');
+      }
+    };
+    const fetchData = async () => {
+      try {
+        const quizData: quizData[] = await getAllQuizzes();
+        setData(quizData);
+      } catch (error) {
+        console.error('Błąd przy pobieraniu quizów');
+      }
+    };
+
+    fetchUsers();
+    fetchData();
+  };
+
   return (
     <Tabs defaultValue="Użytkownicy">
       <Tabs.List mb={15}>

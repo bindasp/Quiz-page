@@ -26,7 +26,7 @@ interface categoryData {
   description: string;
 }
 export const getUsers = async (): Promise<user[]> => {
-  const response = await fetch(`${API_BASE}/api/admin/user`, {
+  const response = await fetch(`${API_BASE}/admin/user`, {
     method: 'GET',
     headers: {
       Accept: 'application/json',
@@ -38,7 +38,7 @@ export const getUsers = async (): Promise<user[]> => {
 };
 
 export const getAllQuizzes = async (): Promise<quizData[]> => {
-  const response = await fetch(`${API_BASE}/api/admin/quiz`, {
+  const response = await fetch(`${API_BASE}/admin/quiz`, {
     method: 'GET',
     headers: {
       Accept: 'application/json',

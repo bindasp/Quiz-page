@@ -81,7 +81,7 @@ export const QuizListItem: FC<QuizListItemProps> = memo(({ item }) => {
           <Text key={item.id} fw={500} size={'lg'} mt={'md'}>
             {item.title}
           </Text>
-
+        43
           <Group justify="flex-end" mt="md">
             <Button
               variant="subtle"
@@ -102,5 +102,8 @@ export const QuizListItem: FC<QuizListItemProps> = memo(({ item }) => {
         onClose={() => setCommentModalOpened(false)}
       />
     </>
+
+    
+
   );
 });

@@ -146,9 +146,16 @@ export const Routing = () => {
 
   let routes;
 
-  if (isLogged == true) {
+  if (isLogged == true && isAdmin == true) {
+    routes = adminRoutes;
+  } 
+  else if (isLogged == true && isAdmin == false) {
     routes = privateRoutes;
-  } else {
+  }
+  else if (isLogged == true && isAdmin == undefined) {
+    routes = privateRoutes;
+  }
+  else {
     routes = publicRoutes;
   }
 
